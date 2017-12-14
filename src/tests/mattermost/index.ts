@@ -6,7 +6,7 @@ import { setTimeout } from 'timers';
 const pubsub = new PubSub();
 const mattermost = new ModuleMattermost({
     url: 'http://mattermost.lavan.office.treesoft.de/hooks/9trcnr83gibou833m61mjjnsqw',
-    channel: 'bot-tests',
+    channel: '',
     username: 'satford'
 }, pubsub);
 
