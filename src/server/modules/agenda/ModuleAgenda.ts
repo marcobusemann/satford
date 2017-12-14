@@ -30,7 +30,7 @@ export class ModuleAgenda {
             .defaultLockLifetime(30000);
         
         this.agenda.on('ready', () => {
-            this.registerTasks();
+            //this.registerTasks();
             this.importTests();
             this.agenda.purge();
             this.agenda.start();
@@ -61,15 +61,26 @@ export class ModuleAgenda {
 
     private importTests() {
         this.config.tests.forEach((test: ITest) => {
-            const typeAvailable = this.tasks.find((task) => test.type === task.name);
-            if (!typeAvailable)
+            const task = this.tasks.find((task) => test.type === task.name);
+            if (!task)
                 console.log('Type not available', test.type);
             else if (test.isActive)
             {
-                
-                this.agenda.now(test.type, test);
-                this.agenda.every(test.frequency, test.type, test);
-                console.log(`Scheduled job ${test.name}`, test);
+                const jobName = `${test.name}.${task.name}`;
+                this.agenda.define(jobName, (job, done) => {
+                    const test = job.attrs.data as ITest;
+                    task.action(test, (result: ITestResult) => {
+                        this.pubsub.publish<ITestCompletedData>(TOPIC_TEST_COMPLETED, {
+                            test,
+                            result
+                        });
+                        done();
+                    });
+                });
+
+                this.agenda.now(jobName, test);
+                this.agenda.every(test.frequency, jobName, test);
+                console.log(`Scheduled job ${jobName}`, test);
             }
         });
     }
