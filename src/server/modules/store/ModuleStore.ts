@@ -4,6 +4,9 @@ import { MongoClient, Db } from 'mongodb';
 
 import * as _ from 'lodash';
 
+const MONGODB_NAME: string = 'eventstore';
+const MONGODB_COLLECTION_TESTS: string = 'tests';
+
 export class ModuleStore {
     constructor(private pubsub: IMessageHub) {
         pubsub.subscribe(TOPIC_TEST_COMPLETED, (message: string, data: any) => {
@@ -16,7 +19,7 @@ export class ModuleStore {
 
     private storeTest(testResult: ITestResult) {
         this.withMongoDb((db, closeConnection) => {
-            const collection = db.collection('tests');
+            const collection = db.collection(MONGODB_COLLECTION_TESTS);
             
             collection.insertOne(testResult, (error, result) => {
                 if (error)
@@ -53,7 +56,7 @@ export class ModuleStore {
         MongoClient.connect(process.env.MONGODB_URL, (error, client) => {
             if (error)
                 throw error;
-            callback(client.db('eventstore'), () => {
+            callback(client.db(MONGODB_NAME), () => {
                 client.close();
             });
         }); 
