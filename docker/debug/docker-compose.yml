@@ -6,11 +6,27 @@ services:
     image: blural/typescript-dev-server
     volumes:
       - ../../:/src
+      - ../../../satford-config.json:/config/config.json
     environment:
       - ENTRY=server.js
       - CONFIG_PATH=src/server
       - PORT=3000
       - NODE_ENV=debug
       - WEBPACK_DEV_SERVER_URL=http://webpack-dev-server:8080
+      # Application specific
+      - CONFIG_FILE=/config/config.json
+      - MONGODB_URL=mongodb://mongo/agenda
+      - MATTERMOST_URL=http://mattermost.lavan.office.treesoft.de/hooks/9trcnr83gibou833m61mjjnsqw
+      - MATTERMOST_USERNAME=satford
+      #- DEBUG=agenda:*
     ports:
       - 3000:3000
+    depends_on: 
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    logging: 
+        driver: none
+    ports:
+      - 27017:27017

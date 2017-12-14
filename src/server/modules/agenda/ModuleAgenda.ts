@@ -22,7 +22,7 @@ export class ModuleAgenda {
             .defaultLockLifetime(30000);
         
         this.agenda.on('ready', () => {
-            const configFile = JSON.parse(readFileSync('./config.json', 'utf-8')) as ITest[];
+            const configFile = JSON.parse(readFileSync(process.env.CONFIG_FILE, 'utf-8')) as ITest[];
             this.registerTasks();
             this.importTests(configFile);
             this.agenda.purge();

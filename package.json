@@ -15,13 +15,11 @@
     "scripts": {
         "clean": "rimraf dist",
         "lint": "tslint -c tslint.json 'src/**/*.ts' 'src/**/*.tsx'",
-        "build-client": "true",
         "build-server": "tsc -p ./src/server",
-        "build": "npm run clean && concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run build-server\" \"npm run build-client\"",
+        "build": "npm run clean && concurrently --prefix \"[{name}]\" --names \"SERVER\" \"npm run build-server\"",
         "test-server": "jest --config=./jest-config-server.json",
-        "test-client": "true",
-        "test": "npm run test-server && npm run test-client",
-        "dev": "concurrently --prefix \"[{name}]\" --names \"TESTS,DOCKER\" -c \"bgYellow.bold,bgBlue.bold\" \"onchange ./src -d 2000 -- npm run test\" \"docker-compose -f docker/debug/docker-compose.yml up\""
+        "test": "npm run test-server",
+        "dev": "concurrently --prefix \"[{name}]\" --names \"DOCKER\" \"docker-compose -f docker/debug/docker-compose.yml up\""
     },
     "devDependencies": {
         "typescript": "^2.6.2",
