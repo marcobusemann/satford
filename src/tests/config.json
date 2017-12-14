@@ -1,0 +1,10 @@
+[{
+    "isActive": true,
+    "name": "sample-service available",
+    "endpoint": "https://www.google.de/",
+    "type": "http-get",
+    "expects": {
+        "statusCode": 200
+    },
+    "frequency": "30 seconds"
+}]
