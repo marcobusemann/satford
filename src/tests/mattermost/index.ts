@@ -1,6 +1,6 @@
-import { ModuleMattermost } from '../../src/modules/mattermost/ModuleMattermost';
-import { PubSub } from '../../src/modules/pubsub/PubSub';
-import { ITestResult } from '../../src/modules/domain/ITest';
+import { ModuleMattermost } from '../../server/modules/mattermost/ModuleMattermost';
+import { PubSub } from '../../server/modules/pubsub/PubSub';
+import { ITestResult } from '../../server/modules/domain/ITest';
 import { setTimeout } from 'timers';
 
 const pubsub = new PubSub();

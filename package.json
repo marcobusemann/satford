@@ -16,6 +16,7 @@
         "clean": "rimraf dist",
         "lint": "tslint -c tslint.json 'src/**/*.ts' 'src/**/*.tsx'",
         "build-server": "tsc -p ./src/server",
+        "build-manualtests": "tsc -p ./src/tests",
         "build": "npm run clean && concurrently --prefix \"[{name}]\" --names \"SERVER\" \"npm run build-server\"",
         "test-server": "jest --config=./jest-config-server.json",
         "test": "npm run test-server",
