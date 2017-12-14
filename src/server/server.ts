@@ -1,11 +1,13 @@
 import * as express from 'express';
 import { ModuleAgenda, PubSub, ModuleStore, ModuleMattermost } from './modules';
+import { ExpressWrapper } from './IExpress';
 
 const pubsub = new PubSub();
 const app = express();
+const appWrapper = new ExpressWrapper(app);
 
-new ModuleAgenda(app, pubsub);
-new ModuleStore(app, pubsub);
+new ModuleAgenda(appWrapper, pubsub);
+new ModuleStore(pubsub);
 
 const MATTERMOST_URL = process.env.MATTERMOST_URL;
 const MATTERMOST_USERNAME = process.env.MATTERMOST_USERNAME;

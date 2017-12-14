@@ -1,7 +1,7 @@
 import * as agendash from 'agendash';
 import * as Agenda from 'agenda';
 
-import { Express } from 'express';
+import { IExpress } from '../../IExpress';
 import { ITask } from './tasks/ITask';
 import { ITest, ITestResult } from '../domain/ITest';
 import { IMessageHub, TOPIC_TEST_COMPLETED } from '../../IMessageHub';
@@ -14,7 +14,7 @@ export class ModuleAgenda {
     private pubsub: IMessageHub;
     private tasks: ITask[] = [];
 
-    constructor(app: Express, pubsub: IMessageHub) {
+    constructor(app: IExpress, pubsub: IMessageHub) {
         this.tasks.push(new HttpGetTask());
 
         this.pubsub = pubsub;

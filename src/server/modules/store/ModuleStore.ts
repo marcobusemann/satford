@@ -1,4 +1,3 @@
-import { Express } from 'express';
 import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED } from '../../IMessageHub';
 import { ITestResult, TestResultComperator } from '../domain/ITest';
 import { MongoClient, Db } from 'mongodb';
@@ -8,7 +7,7 @@ import * as _ from 'lodash';
 export class ModuleStore {
     private db: Db = null;
 
-    constructor(private app: Express, private pubsub: IMessageHub) {
+    constructor(private pubsub: IMessageHub) {
 
         MongoClient.connect(process.env.MONGODB_URL, (error, client) => {
             if (error)
