@@ -4,7 +4,7 @@ import * as Agenda from 'agenda';
 import { IExpress } from '../../IExpress';
 import { ITask } from './tasks/ITask';
 import { ITest, ITestResult } from '../domain/ITest';
-import { IMessageHub, TOPIC_TEST_COMPLETED } from '../../IMessageHub';
+import { IMessageHub, TOPIC_TEST_COMPLETED, ITestCompletedData } from '../../IMessageHub';
 
 import { HttpGetTask } from './tasks/HttpGetTask';
 
@@ -47,7 +47,10 @@ export class ModuleAgenda {
             this.agenda.define(task.name, (job, done) => {
                 const test = job.attrs.data as ITest;
                 task.action(test, (result: ITestResult) => {
-                    this.pubsub.publish(TOPIC_TEST_COMPLETED, result);
+                    this.pubsub.publish<ITestCompletedData>(TOPIC_TEST_COMPLETED, {
+                        test,
+                        result
+                    });
                     done();
                 });
             });

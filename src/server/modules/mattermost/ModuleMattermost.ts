@@ -1,5 +1,5 @@
 import { Express } from 'express';
-import { IMessageHub, TOPIC_TESTRESULT_CHANGED } from '../../IMessageHub';
+import { IMessageHub, TOPIC_TESTRESULT_CHANGED, ITestResultChangedData } from '../../IMessageHub';
 import { ITestResult } from '../domain/ITest';
 
 import * as Mattermost from 'node-mattermost';
@@ -16,14 +16,15 @@ export class ModuleMattermost {
     constructor(private config: IMattermostConfiguration, private pubsub: IMessageHub) {
         this.mattermost = new Mattermost(this.config.url);
 
-        pubsub.subscribe(TOPIC_TESTRESULT_CHANGED, (message: string, data: any) => {
-            console.log('Sending message to mattermost...', data);
-            this.sendMessage(data as ITestResult);
+        pubsub.subscribe<ITestResultChangedData>(TOPIC_TESTRESULT_CHANGED, (message, data) => {
+            this.sendMessage(data);
         });
     }
 
-    sendMessage(testResult: ITestResult): void {
-        const text = `Test **${testResult.testName}** ${testResult.success ? 'is working again!' : 'failed!'}`;
+    sendMessage(data: ITestResultChangedData): void {
+        console.log('Sending message to mattermost...', data);
+        
+        const text = `Test **${data.test.name}** ${data.result.success ? 'is working again!' : 'failed!'}`;
 
         this.mattermost.send({
             text: ' ',
@@ -31,7 +32,19 @@ export class ModuleMattermost {
             username: this.config.username,
             attachments: [{
                 text,
-                color: testResult.success ? '#00ff00' : '#ff0000'
+                color: data.result.success ? '#00ff00' : '#ff0000',
+                fields: [
+                    {
+                        short: true,
+                        title: 'Target',
+                        value: data.test.endpoint
+                    },
+                    {
+                        short: true,
+                        title: 'Type',
+                        value: data.test.type
+                    }
+                ]
             }]
         });
     }

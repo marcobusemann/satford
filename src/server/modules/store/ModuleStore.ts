@@ -1,4 +1,4 @@
-import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED } from '../../IMessageHub';
+import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED, ITestCompletedData, ITestResultChangedData } from '../../IMessageHub';
 import { ITestResult, TestResultComperator } from '../domain/ITest';
 import { MongoClient, Db } from 'mongodb';
 
@@ -11,22 +11,23 @@ export interface IModuleStoreConfiguration {
 
 export class ModuleStore {
     constructor(private config: IModuleStoreConfiguration, private pubsub: IMessageHub) {
-        pubsub.subscribe(TOPIC_TEST_COMPLETED, (message: string, data: any) => {
-            this.storeTest(data as ITestResult);
-            console.log('Storing test', data);
+        pubsub.subscribe<ITestCompletedData>(TOPIC_TEST_COMPLETED, (message, data) => {
+            this.storeTest(data);
         });
     }
 
-    private storeTest(testResult: ITestResult) {
+    private storeTest(data: ITestCompletedData) {
+        console.log('Storing test...', data);
+        
         this.withMongoDb((db, closeConnection) => {
             const collection = db.collection(MONGODB_COLLECTION_TESTS);
             
-            collection.insertOne(testResult, (error, result) => {
+            collection.insertOne(data.result, (error, result) => {
                 if (error)
                     return console.log(error);
     
                 collection
-                    .find({ testName: testResult.testName })
+                    .find({ testName: data.test.name })
                     .sort({ timestamp: -1 })
                     .limit(2)
                     .toArray((error, documents) => {
@@ -37,7 +38,7 @@ export class ModuleStore {
                             return console.log(error);
     
                         if (documents.length <= 1)
-                            return console.log('Did not found two tests for', testResult);
+                            return console.log('Did not found two tests for', data.test.name);
     
                         const comp = new TestResultComperator(
                             documents[0] as ITestResult, 
@@ -46,7 +47,7 @@ export class ModuleStore {
                         console.log('Comparing two tests: ', documents[0], documents[1]);
     
                         if (!comp.equal())
-                            this.pubsub.publish(TOPIC_TESTRESULT_CHANGED, testResult);
+                            this.pubsub.publish<ITestResultChangedData>(TOPIC_TESTRESULT_CHANGED, data);
                     });
             });
         });
