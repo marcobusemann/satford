@@ -59,8 +59,12 @@ export class ModuleAgenda {
 
     private importTests() {
         this.config.tests.forEach((test: ITest) => {
-            if (test.isActive)
+            const typeAvailable = this.tasks.find((task) => test.type === task.name);
+            if (!typeAvailable)
+                console.log('Type not available', test.type);
+            else if (test.isActive)
             {
+                
                 this.agenda.now(test.type, test);
                 this.agenda.every(test.frequency, test.type, test);
                 console.log(`Scheduled job ${test.name}`, test);
