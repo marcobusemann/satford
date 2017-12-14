@@ -4,17 +4,19 @@ import * as Agenda from 'agenda';
 import { Express } from 'express';
 import { ITask } from './tasks/ITask';
 import { ITest, ITestResult } from '../domain/ITest';
-import { Tasks } from './tasks/Tasks';
 import { IMessageHub, TOPIC_TEST_COMPLETED } from '../../IMessageHub';
 import { readFileSync } from 'fs';
 
-const fs = require('fs');
+import { HttpGetTask } from './tasks/HttpGetTask';
 
 export class ModuleAgenda {
     private agenda: Agenda;
     private pubsub: IMessageHub;
+    private tasks: ITask[] = [];
 
     constructor(app: Express, pubsub: IMessageHub) {
+        this.tasks.push(new HttpGetTask());
+
         this.pubsub = pubsub;
         this.agenda = new Agenda()
             .database(process.env.MONGODB_URL, 'agendaJobs')
@@ -22,9 +24,8 @@ export class ModuleAgenda {
             .defaultLockLifetime(30000);
         
         this.agenda.on('ready', () => {
-            const configFile = JSON.parse(readFileSync(process.env.CONFIG_FILE, 'utf-8')) as ITest[];
             this.registerTasks();
-            this.importTests(configFile);
+            this.importTests();
             this.agenda.purge();
             this.agenda.start();
             console.log('Agenda running...');
@@ -38,8 +39,7 @@ export class ModuleAgenda {
     }
 
     private registerTasks() {
-        const tasks = new Tasks();
-        tasks.forEach((task: ITask) => {
+        this.tasks.forEach((task: ITask) => {
             this.agenda.define(task.name, (job, done) => {
                 const test = job.attrs.data as ITest;
                 task.action(test, (result: ITestResult) => {
@@ -51,7 +51,8 @@ export class ModuleAgenda {
         });
     }
 
-    private importTests(tests: ITest[]) {
+    private importTests() {
+        const tests = JSON.parse(readFileSync(process.env.CONFIG_FILE, 'utf-8')) as ITest[];        
         tests.forEach((test: ITest) => {
             if (test.isActive)
             {
