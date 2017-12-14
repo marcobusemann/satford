@@ -2,19 +2,19 @@ import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED } from '../
 import { ITestResult, TestResultComperator } from '../domain/ITest';
 import { MongoClient, Db } from 'mongodb';
 
-import * as _ from 'lodash';
-
 const MONGODB_NAME: string = 'eventstore';
 const MONGODB_COLLECTION_TESTS: string = 'tests';
 
+export interface IModuleStoreConfiguration {
+    mongoDbUrl: string;
+}
+
 export class ModuleStore {
-    constructor(private pubsub: IMessageHub) {
+    constructor(private config: IModuleStoreConfiguration, private pubsub: IMessageHub) {
         pubsub.subscribe(TOPIC_TEST_COMPLETED, (message: string, data: any) => {
             this.storeTest(data as ITestResult);
             console.log('Storing test', data);
         });
-
-        console.log('Module store running...');
     }
 
     private storeTest(testResult: ITestResult) {
@@ -53,7 +53,7 @@ export class ModuleStore {
     }
 
     private withMongoDb(callback: (db: Db, closeConnection: () => void) => void) {
-        MongoClient.connect(process.env.MONGODB_URL, (error, client) => {
+        MongoClient.connect(this.config.mongoDbUrl, (error, client) => {
             if (error)
                 throw error;
             callback(client.db(MONGODB_NAME), () => {

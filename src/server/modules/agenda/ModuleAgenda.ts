@@ -5,21 +5,25 @@ import { IExpress } from '../../IExpress';
 import { ITask } from './tasks/ITask';
 import { ITest, ITestResult } from '../domain/ITest';
 import { IMessageHub, TOPIC_TEST_COMPLETED } from '../../IMessageHub';
-import { readFileSync } from 'fs';
 
 import { HttpGetTask } from './tasks/HttpGetTask';
+
+export interface IModuleAgendaConfiguration {
+    mongoDbUrl: string;
+    tests: ITest[];
+} 
 
 export class ModuleAgenda {
     private agenda: Agenda;
     private pubsub: IMessageHub;
     private tasks: ITask[] = [];
 
-    constructor(app: IExpress, pubsub: IMessageHub) {
+    constructor(private config: IModuleAgendaConfiguration, app: IExpress, pubsub: IMessageHub) {
         this.tasks.push(new HttpGetTask());
 
         this.pubsub = pubsub;
         this.agenda = new Agenda()
-            .database(process.env.MONGODB_URL, 'agendaJobs')
+            .database(this.config.mongoDbUrl, 'agendaJobs')
             .processEvery('30 seconds')
             .defaultLockLifetime(30000);
         
@@ -28,7 +32,6 @@ export class ModuleAgenda {
             this.importTests();
             this.agenda.purge();
             this.agenda.start();
-            console.log('Agenda running...');
         });
     
         this.agenda.on('error', (error) => {
@@ -39,6 +42,7 @@ export class ModuleAgenda {
     }
 
     private registerTasks() {
+        console.log('Available tasks:', this.tasks.map((task) => task.name));
         this.tasks.forEach((task: ITask) => {
             this.agenda.define(task.name, (job, done) => {
                 const test = job.attrs.data as ITest;
@@ -47,13 +51,11 @@ export class ModuleAgenda {
                     done();
                 });
             });
-            console.log(`Registered task ${task.name}`);
         });
     }
 
     private importTests() {
-        const tests = JSON.parse(readFileSync(process.env.CONFIG_FILE, 'utf-8')) as ITest[];        
-        tests.forEach((test: ITest) => {
+        this.config.tests.forEach((test: ITest) => {
             if (test.isActive)
             {
                 this.agenda.now(test.type, test);
