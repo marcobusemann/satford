@@ -5,16 +5,16 @@ import { Express } from 'express';
 import { ITask } from './tasks/ITask';
 import { ITest, ITestResult } from '../domain/ITest';
 import { Tasks } from './tasks/Tasks';
-import { PubSub } from '../pubsub/PubSub';
+import { IMessageHub, TOPIC_TEST_COMPLETED } from '../../IMessageHub';
 import { readFileSync } from 'fs';
 
 const fs = require('fs');
 
 export class ModuleAgenda {
     private agenda: Agenda;
-    private pubsub: PubSub;
+    private pubsub: IMessageHub;
 
-    constructor(app: Express, pubsub: PubSub) {
+    constructor(app: Express, pubsub: IMessageHub) {
         this.pubsub = pubsub;
         this.agenda = new Agenda()
             .database(process.env.MONGODB_URL, 'agendaJobs')
@@ -43,7 +43,7 @@ export class ModuleAgenda {
             this.agenda.define(task.name, (job, done) => {
                 const test = job.attrs.data as ITest;
                 task.action(test, (result: ITestResult) => {
-                    this.pubsub.publish(PubSub.TOPIC_TEST_COMPLETED, result);
+                    this.pubsub.publish(TOPIC_TEST_COMPLETED, result);
                     done();
                 });
             });

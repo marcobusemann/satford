@@ -1,5 +1,5 @@
 import { Express } from 'express';
-import { PubSub } from '../pubsub/PubSub';
+import { IMessageHub, TOPIC_TESTRESULT_CHANGED } from '../../IMessageHub';
 import { ITestResult } from '../domain/ITest';
 
 import * as Mattermost from 'node-mattermost';
@@ -13,10 +13,10 @@ export interface IMattermostConfiguration {
 export class ModuleMattermost {
     private mattermost: any;
 
-    constructor(private config: IMattermostConfiguration, private pubsub: PubSub) {
+    constructor(private config: IMattermostConfiguration, private pubsub: IMessageHub) {
         this.mattermost = new Mattermost(this.config.url);
 
-        pubsub.subscribe(PubSub.TOPIC_TESTRESULT_CHANGED, (message: string, data: any) => {
+        pubsub.subscribe(TOPIC_TESTRESULT_CHANGED, (message: string, data: any) => {
             console.log('Sending message to mattermost...', data);
             this.sendMessage(data as ITestResult);
         });

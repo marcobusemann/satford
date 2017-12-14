@@ -1,5 +1,5 @@
 import { Express } from 'express';
-import { PubSub } from '../pubsub/PubSub';
+import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED } from '../../IMessageHub';
 import { ITestResult, TestResultComperator } from '../domain/ITest';
 import { MongoClient, Db } from 'mongodb';
 
@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 export class ModuleStore {
     private db: Db = null;
 
-    constructor(private app: Express, private pubsub: PubSub) {
+    constructor(private app: Express, private pubsub: IMessageHub) {
 
         MongoClient.connect(process.env.MONGODB_URL, (error, client) => {
             if (error)
@@ -17,7 +17,7 @@ export class ModuleStore {
             console.log('Module store running...');
         }); 
 
-        pubsub.subscribe(PubSub.TOPIC_TEST_COMPLETED, (message: string, data: any) => {
+        pubsub.subscribe(TOPIC_TEST_COMPLETED, (message: string, data: any) => {
             this.storeTest(data as ITestResult);
             console.log('Storing test', data);
         });
@@ -48,7 +48,7 @@ export class ModuleStore {
                     console.log('Comparing two tests: ', documents[0], documents[1]);
 
                     if (!comp.equal())
-                        this.pubsub.publish(PubSub.TOPIC_TESTRESULT_CHANGED, testResult);
+                        this.pubsub.publish(TOPIC_TESTRESULT_CHANGED, testResult);
                 });
         });
     }
