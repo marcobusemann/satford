@@ -37,7 +37,9 @@ export class ModuleStore {
                         if (error)
                             return console.log(error);
     
-                        if (documents.length <= 1)
+                        if (documents.length === 1 && !data.result.success)
+                            this.pubsub.publish<ITestResultChangedData>(TOPIC_TESTRESULT_CHANGED, data);
+                        else if (documents.length <= 1)
                             return console.log('Did not found two tests for', data.test.name);
     
                         const comp = new TestResultComperator(
