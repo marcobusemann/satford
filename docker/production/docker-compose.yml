@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  app: 
+    image: blural/satford
+    build:
+      context: .
+    ports: 
+      - 80:80
+    environment:
+      - PORT=80

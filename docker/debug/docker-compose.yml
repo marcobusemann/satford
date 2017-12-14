@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+
+  typescript-dev-server:
+    image: blural/typescript-dev-server
+    volumes:
+      - ../../:/src
+    environment:
+      - ENTRY=server.js
+      - CONFIG_PATH=src/server
+      - PORT=3000
+      - NODE_ENV=debug
+      - WEBPACK_DEV_SERVER_URL=http://webpack-dev-server:8080
+    ports:
+      - 3000:3000
