@@ -7,6 +7,7 @@ import { ITest, ITestResult } from '../domain/ITest';
 import { IMessageHub, TOPIC_TEST_COMPLETED, ITestCompletedData } from '../../IMessageHub';
 
 import { HttpGetTask } from './tasks/HttpGetTask';
+import { PingTask } from './tasks/PingTask';
 
 export interface IModuleAgendaConfiguration {
     mongoDbUrl: string;
@@ -20,6 +21,7 @@ export class ModuleAgenda {
 
     constructor(private config: IModuleAgendaConfiguration, app: IExpress, pubsub: IMessageHub) {
         this.tasks.push(new HttpGetTask());
+        this.tasks.push(new PingTask());
 
         this.pubsub = pubsub;
         this.agenda = new Agenda()

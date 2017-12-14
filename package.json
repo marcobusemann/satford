@@ -46,6 +46,7 @@
         "lodash": "^4.17.4",
         "mongodb": "^3.0.0-rc0",
         "node-mattermost": "0.0.1",
+        "ping-wrapper2": "0.0.6",
         "pubsub-js": "^1.5.7",
         "request": "^2.83.0"
     }
