@@ -33,11 +33,6 @@ export class ModuleMattermost {
                 text,
                 color: testResult.success ? '#00ff00' : '#ff0000'
             }]
-            //icon_url: 'http://www.foo.com/image.png',
-            //icon_emoji: 'taco',
-            //attachments: attachment_array,
-            //unfurl_links: true,
-            //link_names: 1
         });
     }
 }
