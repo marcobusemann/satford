@@ -6,8 +6,8 @@ import * as Mattermost from 'node-mattermost';
 
 export interface IMattermostConfiguration {
     url: string;
-    channel: string;
     username: string;
+    channel?: string;
 }
 
 export class ModuleMattermost {

@@ -16,8 +16,6 @@ services:
       # Application specific
       - CONFIG_FILE=/config/config.json
       - MONGODB_URL=mongodb://mongo/agenda
-      - MATTERMOST_URL=http://mattermost.lavan.office.treesoft.de/hooks/9trcnr83gibou833m61mjjnsqw
-      - MATTERMOST_USERNAME=satford
       #- DEBUG=agenda:*
     ports:
       - 3000:3000
