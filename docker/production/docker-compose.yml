@@ -3,9 +3,18 @@ version: '2'
 services:
   app: 
     image: blural/satford
-    build:
-      context: .
     ports: 
       - 80:80
     environment:
       - PORT=80
+      - CONFIG_FILE=/config/config.json
+      - MONGODB_URL=mongodb://mongo/agenda
+    volumes:
+      - config.json:/config/config.json
+    depends_on: 
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    volumes: 
+      - ./data:/data/db
