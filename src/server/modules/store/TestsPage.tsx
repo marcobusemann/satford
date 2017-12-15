@@ -40,7 +40,7 @@ export class TestsPage extends React.Component<IProps> {
             return Object.assign({}, test, {
                 results: _.take(results.filter((result) => {
                     return result.testName === test.name;
-                }).sort((a, b) => a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0), 10);
+                }).sort((a, b) => a.timestamp > b.timestamp ? -1 : a.timestamp < b.timestamp ? 1 : 0), 10)
             });
         });
 
