@@ -87,7 +87,7 @@ export class TestsPage extends React.Component<IProps> {
 
         const testsForOverview = testsWithResults.map((test: ITestWithResults) => {
             return (
-                <li style={{ color: test.results && test.results.length > 0 ? (test.results[0].success ? 'green' : 'red') : 'black' }}>
+                <li key={test.name} style={{ color: test.results && test.results.length > 0 ? (test.results[0].success ? 'green' : 'red') : 'black' }}>
                     <a href={'#' + test.name}>
                         { test.name }
                     </a>
