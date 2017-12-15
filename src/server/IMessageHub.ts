@@ -18,3 +18,8 @@ export interface ITestCompletedData {
 export const TOPIC_TESTRESULT_CHANGED: string = "test.testresultchanged"; 
 export interface ITestResultChangedData extends ITestCompletedData {
 }
+
+export const TOPIC_TESTS_CHANGED: string = "test.changed"; 
+export interface ITestsChangedData {
+    tests: ITest[];
+}

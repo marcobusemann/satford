@@ -4,7 +4,7 @@ import * as Agenda from 'agenda';
 import { IExpress } from '../../IExpress';
 import { ITask } from './tasks/ITask';
 import { ITest, ITestResult } from '../domain/ITest';
-import { IMessageHub, TOPIC_TEST_COMPLETED, ITestCompletedData } from '../../IMessageHub';
+import { IMessageHub, TOPIC_TEST_COMPLETED, ITestCompletedData, TOPIC_TESTS_CHANGED, ITestsChangedData } from '../../IMessageHub';
 
 import { HttpGetTask } from './tasks/HttpGetTask';
 import { PingTask } from './tasks/PingTask';
@@ -30,7 +30,6 @@ export class ModuleAgenda {
             .defaultLockLifetime(30000);
         
         this.agenda.on('ready', () => {
-            //this.registerTasks();
             this.importTests();
             this.agenda.purge();
             this.agenda.start();
@@ -41,22 +40,6 @@ export class ModuleAgenda {
         });
 
         app.use('/agenda', agendash(this.agenda));
-    }
-
-    private registerTasks() {
-        console.log('Available tasks:', this.tasks.map((task) => task.name));
-        this.tasks.forEach((task: ITask) => {
-            this.agenda.define(task.name, (job, done) => {
-                const test = job.attrs.data as ITest;
-                task.action(test, (result: ITestResult) => {
-                    this.pubsub.publish<ITestCompletedData>(TOPIC_TEST_COMPLETED, {
-                        test,
-                        result
-                    });
-                    done();
-                });
-            });
-        });
     }
 
     private importTests() {
@@ -83,5 +66,9 @@ export class ModuleAgenda {
                 console.log(`Scheduled job ${jobName}`, test);
             }
         });
+
+        this.pubsub.publish<ITestsChangedData>(TOPIC_TESTS_CHANGED, {
+            tests: this.config.tests
+        })
     }
 }

@@ -16,7 +16,7 @@ new ModuleAgenda({
 }, appWrapper, pubsub);
 new ModuleStore({
     mongoDbUrl: process.env.MONGODB_URL
-}, pubsub);
+}, appWrapper, pubsub);
 
 if (config.mattermost)
     new ModuleMattermost(config.mattermost, pubsub);

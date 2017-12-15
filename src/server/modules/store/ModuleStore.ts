@@ -1,6 +1,9 @@
-import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED, ITestCompletedData, ITestResultChangedData } from '../../IMessageHub';
-import { ITestResult, TestResultComperator } from '../domain/ITest';
+import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED, ITestCompletedData, ITestResultChangedData, ITestsChangedData, TOPIC_TESTS_CHANGED } from '../../IMessageHub';
+import { IExpress } from '../../IExpress';
+import { ITest, ITestResult, TestResultComperator } from '../domain/ITest';
 import { MongoClient, Db } from 'mongodb';
+
+import { TestPageHtml } from './TestsPage';
 
 const MONGODB_NAME: string = 'eventstore';
 const MONGODB_COLLECTION_TESTS: string = 'tests';
@@ -10,9 +13,30 @@ export interface IModuleStoreConfiguration {
 }
 
 export class ModuleStore {
-    constructor(private config: IModuleStoreConfiguration, private pubsub: IMessageHub) {
+    private tests: ITest[];
+
+    constructor(private config: IModuleStoreConfiguration, private express: IExpress, private pubsub: IMessageHub) {
         pubsub.subscribe<ITestCompletedData>(TOPIC_TEST_COMPLETED, (message, data) => {
             this.storeTest(data);
+        });
+
+        pubsub.subscribe<ITestsChangedData>(TOPIC_TESTS_CHANGED, (message, data) => {
+            this.tests = data.tests;
+        })
+
+        express.use('/tests', (request, response) => {
+            this.withMongoDb((db, closeConnection) => {
+                const collection = db.collection(MONGODB_COLLECTION_TESTS);
+
+                collection
+                    .find()
+                    .toArray((error, documents: ITestResult[]) => {
+
+                        closeConnection();
+
+                        response.send(TestPageHtml(this.tests, documents));
+                    });
+            });
         });
     }
 
