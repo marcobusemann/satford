@@ -1,6 +1,6 @@
 {
     "name": "satford",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Simple API testing service for devs",
     "main": "index.js",
     "keywords": [
@@ -17,10 +17,12 @@
         "lint": "tslint -c tslint.json 'src/**/*.ts' 'src/**/*.tsx'",
         "build-server": "tsc -p ./src/server",
         "build-manualtests": "tsc -p ./src/tests",
-        "build": "npm run clean && concurrently --prefix \"[{name}]\" --names \"SERVER\" \"npm run build-server\"",
+        "build": "npm run clean && npm run build-server",
         "test-server": "jest --config=./jest-config-server.json",
         "test": "npm run test-server",
-        "dev": "concurrently --prefix \"[{name}]\" --names \"DOCKER\" \"docker-compose -f docker/debug/docker-compose.yml up\""
+        "dev": "concurrently --prefix \"[{name}]\" --names \"DOCKER\" \"docker-compose -f docker/debug/docker-compose.yml up\"",
+        "tmp": "echo version",
+        "dockerize": "npm run build && docker build -t blural/satford:latest . && docker tag blural/satford:latest blural/satford:0.1"
     },
     "devDependencies": {
         "typescript": "^2.6.2",
