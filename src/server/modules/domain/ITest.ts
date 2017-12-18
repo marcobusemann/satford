@@ -11,6 +11,7 @@ export interface ITest
     type: string;
     expects: ITestExpectation;
     frequency: string;
+    options: any;
 }
 
 export interface ITestResult {

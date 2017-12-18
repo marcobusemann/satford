@@ -7,6 +7,7 @@ import { ITest, ITestResult } from '../domain/ITest';
 import { IMessageHub, TOPIC_TEST_COMPLETED, ITestCompletedData, TOPIC_TESTS_CHANGED, ITestsChangedData } from '../../IMessageHub';
 
 import { HttpGetTask } from './tasks/HttpGetTask';
+import { HttpPostTask } from './tasks/HttpPostTask';
 import { PingTask } from './tasks/PingTask';
 
 export interface IModuleAgendaConfiguration {
@@ -21,6 +22,7 @@ export class ModuleAgenda {
 
     constructor(private config: IModuleAgendaConfiguration, app: IExpress, pubsub: IMessageHub) {
         this.tasks.push(new HttpGetTask());
+        this.tasks.push(new HttpPostTask());
         this.tasks.push(new PingTask());
 
         this.pubsub = pubsub;
