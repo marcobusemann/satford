@@ -7,7 +7,9 @@ const packageConfig = require(path.join(__dirname, '..', 'package.json'));
 const commands = [
     'npm run build',
     'docker build -t blural/satford:latest .',
-    'docker tag blural/satford:latest blural/satford:' + packageConfig.version
+    'docker tag blural/satford:latest blural/satford:' + packageConfig.version,
+    'docker push blural/satford:latest',
+    'docker push blural/satford:' + packageConfig.version,
 ];
 
 async.eachSeries(commands, (command, callback) => {
