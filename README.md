@@ -92,6 +92,7 @@ docker-compose up -d
 ```
 
 # Roadmap
+- [ ] Setup Git-Flow and CI/CD
 - [ ] Implement module system
 - [ ] Configure tests in backend
 - [ ] Live status page (socket.io)
