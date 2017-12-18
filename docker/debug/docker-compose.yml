@@ -6,7 +6,7 @@ services:
     image: blural/typescript-dev-server
     volumes:
       - ../../:/src
-      - ../../../satford-config.json:/config/config.json
+      - ../../src/tests/config.json:/config/config.json
     environment:
       - ENTRY=server.js
       - CONFIG_PATH=src/server
