@@ -98,6 +98,8 @@ docker-compose up -d
 - [ ] Live status page (socket.io)
 - [ ] E-Mail notification target
 - [ ] Slack notification target
+- [ ] Show link to backend in notification
+- [ ] Show link to text that describes how to react on an error
 
 # Development
 Requirements:
