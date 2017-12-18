@@ -24,7 +24,7 @@ export class ModuleMattermost {
     sendMessage(data: ITestResultChangedData): void {
         console.log(`Sending message to mattermost for ${data.test.name}`);
         
-        const text = `Test **${data.test.name}** ${data.result.success ? 'is working again!' : 'failed!'}`;
+        const text = `**${data.test.name}** ${data.result.success ? 'is working again!' : 'failed!'}`;
 
         this.mattermost.send({
             text: ' ',
