@@ -22,7 +22,7 @@ export class ModuleMattermost {
     }
 
     sendMessage(data: ITestResultChangedData): void {
-        console.log('Sending message to mattermost...', data);
+        console.log(`Sending message to mattermost for ${data.test.name}`);
         
         const text = `Test **${data.test.name}** ${data.result.success ? 'is working again!' : 'failed!'}`;
 

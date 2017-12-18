@@ -41,7 +41,7 @@ export class ModuleStore {
     }
 
     private storeTest(data: ITestCompletedData) {
-        console.log('Storing test...', data);
+        console.log('Storing test result...');
         
         this.withMongoDb((db, closeConnection) => {
             const collection = db.collection(MONGODB_COLLECTION_TESTS);
@@ -66,11 +66,9 @@ export class ModuleStore {
                         else if (documents.length <= 1)
                             return console.log('Did not found two tests for', data.test.name);
     
-                        const comp = new TestResultComperator(
-                            documents[0] as ITestResult, 
-                            documents[1] as ITestResult);
-    
-                        console.log('Comparing two tests: ', documents[0], documents[1]);
+                        const document1 = documents[0] as ITestResult;
+                        const document2 = documents[1] as ITestResult;
+                        const comp = new TestResultComperator(document1, document2);
     
                         if (!comp.equal())
                             this.pubsub.publish<ITestResultChangedData>(TOPIC_TESTRESULT_CHANGED, data);
