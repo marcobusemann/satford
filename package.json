@@ -1,6 +1,6 @@
 {
     "name": "satford",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Simple API testing service for devs",
     "main": "index.js",
     "keywords": [
@@ -22,18 +22,19 @@
         "test": "npm run test-server",
         "dev": "concurrently --prefix \"[{name}]\" --names \"DOCKER\" \"docker-compose -f docker/debug/docker-compose.yml up\"",
         "tmp": "echo version",
-        "dockerize": "npm run build && docker build -t blural/satford:latest . && docker tag blural/satford:latest blural/satford:0.1"
+        "release": "node scripts/createNewRelease.js"
     },
     "devDependencies": {
-        "typescript": "^2.6.2",
+        "async": "^2.6.0",
         "concurrently": "^3.4.0",
+        "cross-env": "^4.0.0",
         "jest": "^21.2.1",
         "onchange": "^3.3.0",
         "rimraf": "^2.6.1",
         "style-loader": "^0.16.1",
         "ts-jest": "^21.1.3",
         "tslint": "^5.1.0",
-        "cross-env": "^4.0.0"
+        "typescript": "^2.6.2"
     },
     "dependencies": {
         "@types/agenda": "^1.0.0",
