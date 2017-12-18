@@ -63,9 +63,9 @@ export class ModuleAgenda {
                     });
                 });
 
-                this.agenda.now(jobName, test);
+                //this.agenda.now(jobName, test);
                 this.agenda.every(test.frequency, jobName, test);
-                console.log(`Scheduled job ${jobName}`, test);
+                console.log(`Scheduled job ${jobName} for ${test.name}`);
             }
         });
 
