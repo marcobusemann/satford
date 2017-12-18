@@ -56,8 +56,8 @@ export class TestsPage extends React.Component<IProps> {
 
         const testsWithResultsVisual = testsWithResults.map((test) => {
             return (
-                <div>
-                    <div key={test.name} className="card">
+                <div key={test.name}>
+                    <div className="card">
                         <h3 className="card-header"><a id={test.name}>{ test.name }</a></h3>
                         <div className="card-body">
                             <b>Active</b>: { test.isActive ? 'Yes' : 'No' }<br />
