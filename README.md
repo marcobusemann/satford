@@ -35,7 +35,8 @@ config.json
         "expects": {
             "statusCode": 200
         },
-        "frequency": "5 minutes"
+        "frequency": "5 minutes",
+        "allowedFails": 1
     }, {
         "isActive": true,
         "name": "service B",

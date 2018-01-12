@@ -1,3 +1,13 @@
 {
-    "tests": []
+    "tests": [{
+        "isActive": true,
+        "name": "treesoft.de (available)",
+        "endpoint": "http://treesoft.de",
+        "type": "http-get",
+        "expects": {
+            "statusCode": 200
+        },
+        "frequency": "5 minutes",
+        "allowedFails": 1
+    }]
 }

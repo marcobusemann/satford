@@ -12,6 +12,7 @@ export interface ITest
     expects: ITestExpectation;
     frequency: string;
     options: any;
+    allowedFails?: number;
 }
 
 export interface ITestResult {

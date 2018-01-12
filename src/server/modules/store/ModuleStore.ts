@@ -2,6 +2,7 @@ import { IMessageHub, TOPIC_TEST_COMPLETED, TOPIC_TESTRESULT_CHANGED, ITestCompl
 import { IExpress } from '../../IExpress';
 import { ITest, ITestResult, TestResultComperator } from '../domain/ITest';
 import { MongoClient, Db } from 'mongodb';
+import { ChangeDetection } from './ChangeDetection';
 
 import { TestPageHtml } from './TestsPage';
 
@@ -49,28 +50,24 @@ export class ModuleStore {
             collection.insertOne(data.result, (error, result) => {
                 if (error)
                     return console.log(error);
-    
+
+                const allowedFails = data.test.allowedFails || 0;
+                const amountOfResultsToCompare = allowedFails + 2;
+
+                const changeDetection = new ChangeDetection(allowedFails);
+
                 collection
                     .find({ testName: data.test.name })
                     .sort({ timestamp: -1 })
-                    .limit(2)
+                    .limit(amountOfResultsToCompare)
                     .toArray((error, documents) => {
 
                         closeConnection();
 
                         if (error)
                             return console.log(error);
-    
-                        if (documents.length === 1 && !data.result.success)
-                            this.pubsub.publish<ITestResultChangedData>(TOPIC_TESTRESULT_CHANGED, data);
-                        else if (documents.length <= 1)
-                            return console.log('Did not found two tests for', data.test.name);
-    
-                        const document1 = documents[0] as ITestResult;
-                        const document2 = documents[1] as ITestResult;
-                        const comp = new TestResultComperator(document1, document2);
-    
-                        if (!comp.equal())
+
+                        if (changeDetection.hasStateChanged(documents))
                             this.pubsub.publish<ITestResultChangedData>(TOPIC_TESTRESULT_CHANGED, data);
                     });
             });
