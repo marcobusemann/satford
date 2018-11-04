@@ -1,7 +1,7 @@
 import * as GlobalPubSub from 'pubsub-js';
-import { IMessageHub } from '../message-hub/IMessageHub';
+import { IMessageHub } from './IMessageHub';
 
-export class PubSub implements IMessageHub {
+export class PubSubMessageHub implements IMessageHub {
     publish<T = any>(message: string, data: T): boolean {
         return GlobalPubSub.publish(message, data);
     }
