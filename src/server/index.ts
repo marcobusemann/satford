@@ -6,17 +6,15 @@ import { config } from "./config";
 
 import { PubSubMessageHub } from "./components/PubSubMessageHub";
 import { ScheduledTasks } from "./components/ScheduledTasks";
-import {
-    FileSystemConfiguration,
-    IConfiguration
-} from "./components/Configuration";
+import { IConfiguration } from "./components/Configuration";
 import { StaticTestsImport } from "./components/StaticTestsImport";
 import { DebugConfiguration } from "./components/DebugConfiguration";
 import { IMongoDb } from "./components/IMongoDb";
 import { InMemoryMongoDb } from "./components/InMemoryMongoDb";
 import { ExternalMongoDb } from "./components/ExternalMongoDb";
-import { PersistedTestResults } from './components/PersistedTestResults';
-import { ChangeDetection } from './components/ChangeDetection';
+import { PersistedTestResults } from "./components/PersistedTestResults";
+import { ChangeDetection } from "./components/ChangeDetection";
+import { FileSystemConfiguration } from './components/FileSystemConfiguration';
 
 let mongodb: IMongoDb = null;
 let configuration: IConfiguration = null;
@@ -46,5 +44,5 @@ setTimeout(async () => {
     app.use(AppRouter(scheduledTasks));
     app.listen(config.port, () => {
         console.log(`Server listening on port ${config.port}!`);
-    }).on('error', console.log);    
-}, 0)
+    }).on("error", console.log);
+}, 0);
