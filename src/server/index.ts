@@ -15,6 +15,7 @@ import { PersistedTestResults } from "./components/PersistedTestResults";
 import { ChangeDetection } from "./components/ChangeDetection";
 import { FileSystemConfiguration } from "./components/FileSystemConfiguration";
 import { MattermostNotifications } from "./components/MattermostNotifications";
+import { ClientButtler } from './components/ClientButtler';
 
 let configuration: IConfiguration = null;
 if (process.env.NODE_ENV === "production") {
@@ -43,9 +44,7 @@ const app = express();
 const httpServer = new HttpServer(app);
 const io = socketIo(httpServer);
 
-io.on("connection", function(socket) {
-    console.log("a user connected");
-});
+const clientButtler = new ClientButtler(io, messageHub);
 
 app.use(morgan("tiny"));
 
@@ -54,6 +53,7 @@ setTimeout(async () => {
     await persistedTestResults.start();
     await changeDetection.start();
     await mattermostNotifications.start();
+    await clientButtler.start();
     staticTests.importTests();
 
     app.use(AppRouter(scheduledTasks));

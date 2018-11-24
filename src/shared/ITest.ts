@@ -1,3 +1,5 @@
+import { ITestResult } from "./ITestResult";
+
 export interface ITest {
     isActive: boolean;
     name: string;
@@ -15,4 +17,9 @@ export class FakeTest implements ITest {
     options: any;
 
     constructor(public name: string) {}
+}
+
+export interface ITestsAndLastResults {
+    tests: ITest[];
+    results: { [index: string]: ITestResult };
 }
