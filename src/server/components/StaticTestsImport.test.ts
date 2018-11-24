@@ -1,5 +1,5 @@
 import { StaticTestsImport } from "./StaticTestsImport";
-import { FakeConfiguration } from "./Configuration";
+import { FakeConfiguration } from "./IConfiguration";
 import { FakeTest } from "../../shared/ITest";
 import { TEST_CREATED } from "./Messages";
 import { FakeMessageHub } from "./FakeMessageHub";

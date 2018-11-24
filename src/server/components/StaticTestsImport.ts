@@ -1,5 +1,5 @@
 import { IMessageHub } from "./IMessageHub";
-import { IConfiguration } from "./Configuration";
+import { IConfiguration } from "./IConfiguration";
 import { TEST_CREATED, ITestCreatedData } from "./Messages";
 
 export class StaticTestsImport {

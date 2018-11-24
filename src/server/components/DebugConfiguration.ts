@@ -1,9 +1,11 @@
-import { IConfiguration } from "./Configuration";
+import { IConfiguration, IMattermostConfigurationData } from "./IConfiguration";
 import { ITest } from "../../shared/ITest";
+import { IMattermost } from './IMattermost';
+import { DebugMattermost } from './DebugMattermost';
+import { InMemoryMongoDb } from './InMemoryMongoDb';
+import { IMongoDb } from './IMongoDb';
 
 export class DebugConfiguration implements IConfiguration {
-    constructor() {}
-
     async tests(): Promise<ITest[]> {
         return [
             {
@@ -27,5 +29,13 @@ export class DebugConfiguration implements IConfiguration {
                 }
             }
         ];
+    }
+
+    async mattermost(): Promise<IMattermost> {
+        return new DebugMattermost();
+    }
+
+    public async mongodb(): Promise<IMongoDb> {
+        return new InMemoryMongoDb();
     }
 }

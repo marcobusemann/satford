@@ -14,7 +14,8 @@ import {
     ITestScheduledData,
     ITestFinishedData
 } from "./Messages";
-import { IMongoDb, IRunningMongoDb } from "./IMongoDb";
+import { IRunningMongoDb } from "./IMongoDb";
+import { IConfiguration } from "./IConfiguration";
 
 export interface IScheduledTasksConfiguration {
     mongoDbUrl: string;
@@ -24,14 +25,18 @@ export class ScheduledTasks {
     public agenda: Agenda;
     private tasks: ISchedulableTask[] = [];
 
-    constructor(private mongoDb: IMongoDb, private messageHub: IMessageHub) {
+    constructor(
+        private configuration: IConfiguration,
+        private messageHub: IMessageHub
+    ) {
         this.tasks.push(new HttpGetTask());
         this.tasks.push(new HttpPostTask());
         this.tasks.push(new PingTask());
     }
 
     public async start(): Promise<void> {
-        const running = await this.mongoDb.running();
+        const mongoDb = await this.configuration.mongodb();
+        const running = await mongoDb.running();
         return this.spinupAgenda(running);
     }
 

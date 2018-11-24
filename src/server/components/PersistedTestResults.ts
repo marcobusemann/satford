@@ -7,16 +7,17 @@ import {
 } from "./Messages";
 import * as mongoose from "mongoose";
 import { MongoTestResult } from "./MongoTestResult";
-import { IMongoDb } from './IMongoDb';
+import { IConfiguration } from './IConfiguration';
 
 export class PersistedTestResults {
     constructor(
-        private mongoDb: IMongoDb,
+        private configuration: IConfiguration,
         private messageHub: IMessageHub
     ) {}
 
     public async start() {
-        const runningMongoDb = await this.mongoDb.running();
+        const mongoDb = await this.configuration.mongodb();
+        const runningMongoDb = await mongoDb.running();
         await mongoose.connect(runningMongoDb.url);
 
         this.messageHub.subscribe<ITestFinishedData>(
