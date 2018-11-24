@@ -17,3 +17,15 @@ export interface ITestFinishedData {
     result: ITestResult;
     test: ITest;
 }
+
+export const TEST_RESULT_SAVED = "TEST_RESULT_SAVED";
+export interface ITestResultSavedData {
+    result: ITestResult;
+    test: ITest;
+}
+
+export const TEST_STATE_CHANGED = "TEST_STATE_CHANGED";
+export interface ITestStateChangedData {
+    result: ITestResult;
+    test: ITest;
+}

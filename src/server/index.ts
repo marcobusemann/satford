@@ -15,6 +15,8 @@ import { DebugConfiguration } from "./components/DebugConfiguration";
 import { IMongoDb } from "./components/IMongoDb";
 import { InMemoryMongoDb } from "./components/InMemoryMongoDb";
 import { ExternalMongoDb } from "./components/ExternalMongoDb";
+import { PersistedTestResults } from './components/PersistedTestResults';
+import { ChangeDetection } from './components/ChangeDetection';
 
 let mongodb: IMongoDb = null;
 let configuration: IConfiguration = null;
@@ -29,12 +31,16 @@ if (process.env.NODE_ENV === "production") {
 const messageHub = new PubSubMessageHub();
 const scheduledTasks = new ScheduledTasks(mongodb, messageHub);
 const staticTests = new StaticTestsImport(configuration, messageHub);
+const persistedTestResults = new PersistedTestResults(mongodb, messageHub);
+const changeDetection = new ChangeDetection(messageHub);
 
 const app = express();
 app.use(morgan("tiny"));
 
 setTimeout(async () => {
     await scheduledTasks.start();
+    await persistedTestResults.start();
+    await changeDetection.start();
     staticTests.importTests();
 
     app.use(AppRouter(scheduledTasks));

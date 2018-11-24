@@ -15,6 +15,16 @@ export class DebugConfiguration implements IConfiguration {
                     endpoint: "http://google.de",
                     expectedStatusCode: 200
                 }
+            },
+            {
+                name: "localhost demo service",
+                frequency: "30 seconds",
+                isActive: true,
+                type: "http-get",
+                options: {
+                    endpoint: "http://localhost:4000",
+                    expectedStatusCode: 200
+                }
             }
         ];
     }
