@@ -10,7 +10,7 @@ export class DebugConfiguration implements IConfiguration {
         return [
             {
                 name: "google.de",
-                frequency: "30 seconds",
+                frequency: "10 seconds",
                 isActive: true,
                 type: "http-get",
                 options: {
@@ -20,7 +20,7 @@ export class DebugConfiguration implements IConfiguration {
             },
             {
                 name: "localhost demo service",
-                frequency: "30 seconds",
+                frequency: "10 seconds",
                 isActive: true,
                 type: "http-get",
                 options: {

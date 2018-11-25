@@ -34,7 +34,7 @@ export class HttpPostTask implements ISchedulableTask {
             });                    
         } catch (error) {
             return new TestResult(false, test.name, {
-                error
+                error: error.message
             });                    
         }
     }

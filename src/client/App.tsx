@@ -1,40 +1,36 @@
 import * as React from "react";
 import { Layout, Menu, Breadcrumb } from "antd";
 import { Tests } from "./components/Tests";
+import { Test } from "./components/Test";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const { Header, Content, Footer } = Layout;
 
 export class App extends React.Component {
     render() {
         return (
-            <Layout className="layout">
-                <Header>
-                    <div className="logo" />
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        defaultSelectedKeys={["2"]}
-                        style={{ lineHeight: "64px" }}
-                    />
-                </Header>
-                <Content style={{ padding: "0 50px" }}>
-                    <Breadcrumb style={{ margin: "16px 0" }}>
-                        <Breadcrumb.Item>Tests</Breadcrumb.Item>
-                    </Breadcrumb>
-                    <div
-                        style={{
-                            background: "#fff",
-                            padding: 24,
-                            minHeight: 280
-                        }}
-                    >
-                        <Tests />
-                    </div>
-                </Content>
-                <Footer style={{ textAlign: "center" }}>
-                    Ant Design ©2018 Created by Ant UED
-                </Footer>
-            </Layout>
+            <Router>
+                <Layout className="layout">
+                    <Header>
+                        <Link to="/" style={{ textDecoration: "none" }}>
+                            <h1 style={{ color: "white" }}>SATFORD</h1>
+                        </Link>
+                        <Menu
+                            theme="dark"
+                            mode="horizontal"
+                            defaultSelectedKeys={["2"]}
+                            style={{ lineHeight: "64px" }}
+                        />
+                    </Header>
+                    <Content style={{ padding: "0 50px" }}>
+                        <Route exact path="/" component={Tests} />
+                        <Route exact path="/test/:name" component={Test} />
+                    </Content>
+                    <Footer style={{ textAlign: "center" }}>
+                        Satford 2018 Created by Marco Busemann
+                    </Footer>
+                </Layout>
+            </Router>
         );
     }
 }

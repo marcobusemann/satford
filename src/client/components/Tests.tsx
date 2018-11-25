@@ -1,8 +1,9 @@
 import * as React from "react";
-import { List, Tag } from "antd";
+import { List, Tag, Breadcrumb } from "antd";
 import * as socketIo from "socket.io-client";
 import { ITest, ITestsAndLastResults } from "../../shared/ITest";
 import { ITestResult } from "../../shared/ITestResult";
+import { Link } from "react-router-dom";
 
 interface IState {
     tests: ITest[];
@@ -42,12 +43,24 @@ export class Tests extends React.Component<any, IState> {
 
         return (
             <React.Fragment>
-                <h1>Tests</h1>
-                <List
-                    bordered
-                    dataSource={tests}
-                    renderItem={test => this.renderTest(test)}
-                />
+                <Breadcrumb style={{ margin: "16px 0" }}>
+                    <Breadcrumb.Item>
+                        <Link to="/">Tests</Link>
+                    </Breadcrumb.Item>
+                </Breadcrumb>
+                <div
+                    style={{
+                        background: "#fff",
+                        padding: 24,
+                        minHeight: 500
+                    }}
+                >
+                    <h1>Tests</h1>
+                    <List
+                        dataSource={tests}
+                        renderItem={test => this.renderTest(test)}
+                    />
+                </div>
             </React.Fragment>
         );
     }
@@ -88,10 +101,12 @@ export class Tests extends React.Component<any, IState> {
         tags.push(<Tag key="frequency">{test.frequency}</Tag>);
 
         return (
-            <List.Item key={test.name}>
-                <List.Item.Meta title={test.name} />
-                <div>{tags}</div>
-            </List.Item>
+            <Link to={ "/test/" + test.name }>
+                <List.Item key={test.name}>
+                    <List.Item.Meta title={test.name} />
+                    <div>{tags}</div>
+                </List.Item>
+            </Link>
         );
     };
 }
