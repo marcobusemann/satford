@@ -14,6 +14,10 @@ export class StaticTestsImport {
         for (const test of tests) {
             this.messageHub.publish<ITestCreatedData>(TEST_CREATED, { test });
         }
+
+        if (tests.length === 0)
+            console.log("No tests in configuration provided!");
+
         console.log("Finished importing tests.");
     }
 }

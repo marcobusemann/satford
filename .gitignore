@@ -1,3 +1,5 @@
 .fusebox
 dist
 node_modules
+.vscode
+docker/data

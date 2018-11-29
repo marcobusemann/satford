@@ -38,6 +38,11 @@ export class Tests extends React.Component<any, IState> {
         });
     }
 
+    componentWillUnmount() {
+        this.socket.disconnect();
+        this.socket.close();
+    }
+
     render() {
         const { tests } = this.state;
 

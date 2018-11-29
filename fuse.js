@@ -1,36 +1,66 @@
-const { FuseBox, WebIndexPlugin, CSSPlugin } = require("fuse-box");
+const {
+    FuseBox,
+    WebIndexPlugin,
+    CSSPlugin,
+    QuantumPlugin
+} = require("fuse-box");
 
-const fuse = FuseBox.init({
+const isDebug = process.env.NODE_ENV !== "production";
+
+const fuseServer = FuseBox.init({
     homeDir: "src",
     output: "dist/$name.js",
+    sourceMaps: true
+});
+
+const fuseClient = FuseBox.init({
+    homeDir: "src",
+    output: "dist/public/$name.js",
     sourceMaps: true,
     plugins: [
         CSSPlugin(),
         WebIndexPlugin({
             template: "src/client/index.html",
-            target: "public/index.html",
-            bundles: ["public/bundle"]
-        })
+            target: "index.html",
+            path: "/public/",
+            bundles: ["bundle"]
+        }),
+        !isDebug &&
+            QuantumPlugin({
+                uglify: false,
+                css: {
+                    path: "styles.min.css"
+                },
+                bakeApiIntoBundle: "bundle",
+                treeshake: false
+            })
     ]
 });
 
-fuse.dev({
-    port: 4445,
-    httpServer: false
-});
+if (isDebug) {
+    fuseServer.dev({
+        port: 4444,
+        httpServer: false
+    });
+}
 
-fuse.bundle("server")
-    .watch("server/**")
+const serverBundle = fuseServer
+    .bundle("server")
     .target("server@esnext")
-    .instructions(" > [server/index.ts]")
-    .completed(proc => {
+    .instructions(" > [server/index.ts]");
+
+if (isDebug)
+    serverBundle.watch("server/**").completed(proc => {
         proc.start();
     });
 
-fuse.bundle("public/bundle")
-    .watch("client/**")
-    .target("browser")
-    .hmr()
-    .instructions(" > client/index.tsx");
+const clientBundle = fuseClient
+    .bundle("bundle")
+    .target("browser");
 
-fuse.run();
+if (isDebug) clientBundle.hmr().watch("client/**");
+
+clientBundle.instructions(" > client/index.tsx");
+
+fuseServer.run();
+fuseClient.run();

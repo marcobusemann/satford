@@ -1,10 +1,11 @@
 {
   "name": "satford",
-  "version": "0.0.1",
+  "version": "1.0.9",
   "description": "Simple API testing service for devs",
   "main": "index.js",
   "scripts": {
     "start": "mkdirp dist && cd dist && node ../fuse.js",
+    "bundle": "mkdirp dist && cd dist && NODE_ENV=production node ../fuse.js",
     "test": "jest"
   },
   "keywords": [
@@ -22,7 +23,6 @@
     "element-resize-detector": "^1.1.14",
     "express": "^4.16.4",
     "moment": "^2.22.2",
-    "mongodb-memory-server": "^2.7.2",
     "mongoose": "^5.3.13",
     "morgan": "^1.9.1",
     "node-mattermost": "0.0.1",
@@ -35,6 +35,7 @@
     "socket.io": "^2.1.1"
   },
   "devDependencies": {
+    "mongodb-memory-server": "^2.7.2",
     "@types/agenda": "^2.0.3",
     "@types/express": "^4.16.0",
     "@types/jest": "^23.3.9",
@@ -48,6 +49,7 @@
     "fuse-box": "^3.6.0",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.4",
-    "typescript": "^3.1.6"
+    "typescript": "^3.1.6",
+    "uglify-es": "^3.3.9"
   }
 }

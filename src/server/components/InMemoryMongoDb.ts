@@ -1,5 +1,4 @@
 import { IMongoDb, IRunningMongoDb } from "./IMongoDb";
-import MongoInMemory from "mongodb-memory-server";
 
 export class InMemoryMongoDb implements IMongoDb {
     private server: any = null;
@@ -8,11 +7,12 @@ export class InMemoryMongoDb implements IMongoDb {
         if (this.server)
             return this.runningDb();
 
+        const MongoInMemory = require('mongodb-memory-server').MongoMemoryServer;
         this.server = new MongoInMemory();
         return this.runningDb();
     }
 
-    async runningDb(): Promise<IRunningMongoDb> {
+    private async runningDb(): Promise<IRunningMongoDb> {
         const runningDb: IRunningMongoDb = {
             url: await this.server.getConnectionString()
         };

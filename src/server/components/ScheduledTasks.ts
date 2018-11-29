@@ -37,10 +37,10 @@ export class ScheduledTasks {
     public async start(): Promise<void> {
         const mongoDb = await this.configuration.mongodb();
         const running = await mongoDb.running();
-        return this.spinupAgenda(running);
+        return await this.spinupAgenda(running);
     }
 
-    private async spinupAgenda(runningMongoDb: IRunningMongoDb) {
+    private spinupAgenda(runningMongoDb: IRunningMongoDb) {
         return new Promise<void>((resolve, reject) => {
             console.log(`Connecting agenda to ${runningMongoDb.url}.`);
 

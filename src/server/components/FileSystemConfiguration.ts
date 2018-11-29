@@ -9,6 +9,7 @@ import { IMattermost } from "./IMattermost";
 import { NodeMattermost } from "./NodeMattermost";
 import { IMongoDb } from "./IMongoDb";
 import { ExternalMongoDb } from "./ExternalMongoDb";
+import { DebugMattermost } from './DebugMattermost';
 
 export class FileSystemConfiguration implements IConfiguration {
     constructor(
@@ -19,12 +20,14 @@ export class FileSystemConfiguration implements IConfiguration {
 
     public async tests(): Promise<ITest[]> {
         const configuration = await this.configuration();
-        return configuration.tests;
+        return configuration.tests || [];
     }
 
     public async mattermost(): Promise<IMattermost> {
         const configuration = await this.configuration();
         const mattermostConfig = configuration.mattermost;
+        if (!mattermostConfig)
+            return new DebugMattermost();
         return new NodeMattermost(
             mattermostConfig.channel,
             mattermostConfig.username,

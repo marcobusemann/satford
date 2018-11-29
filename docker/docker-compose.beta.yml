@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  app: 
+    image: blural/satford:beta
+    ports: 
+      - 80:80
+    environment:
+      - PORT=80
+      - CONFIG_FILE=/config/config.json
+      - MONGODB_URL=mongodb://mongo/satford
+      - NODE_ENV=production
+    volumes:
+      - ./beta-config.json:/config/config.json
+    depends_on: 
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    volumes: 
+      - ./data:/data/db
