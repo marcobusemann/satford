@@ -6,6 +6,7 @@ import { Table, Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
 import * as moment from "moment";
 import { GitHubCalendar } from "./TestCalendar";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 
 import "./TestCalendar.css";
 
@@ -61,14 +62,52 @@ export class Test extends React.Component<IProps, IState> {
         const { results } = this.state;
         const testName = this.props.match.params.name;
 
-        let chartData = {};
+        let calendarChartData = {};
+        let chartDataMap = {};
+        let chartData = [];
+
+        if (results.length !== 0) {
+            const latest = results[0];
+            console.log('latest', latest);
+            chartData.push({
+                date: moment(latest.timestamp).subtract(1, 'day').format("YYYY-MM-DD"),
+                success: 0,
+                failed: 0,
+            });
+        }
+
         results.forEach(result => {
             const date = moment(result.timestamp).format("YYYY-MM-DD");
-            if (!chartData[date]) {
+            if (!calendarChartData[date]) {
                 const index = result.success ? 1 : 2;
-                chartData[date] = index;
+                calendarChartData[date] = index;
             }
+
+            if (!chartDataMap[date]) {
+                const dayData = {
+                    date: date,
+                    success: 0,
+                    failed: 0,
+                };
+                chartDataMap[date] = dayData;
+                chartData.push(dayData);
+            }
+
+            if (result.success)
+                chartDataMap[date].success++;
+            else
+                chartDataMap[date].failed++;
         });
+
+        if (results.length !== 0) {
+            const last = results[results.length - 1];
+            console.log('last', last);
+            chartData.push({
+                date: moment(last.timestamp).add(1, 'day').format("YYYY-MM-DD"),
+                success: 0,
+                failed: 0,
+            })
+        }
 
         return (
             <React.Fragment>
@@ -95,10 +134,35 @@ export class Test extends React.Component<IProps, IState> {
                         }}
                     >
                         <GitHubCalendar
-                            values={chartData}
+                            values={calendarChartData}
                             until={moment().format("YYYY-MM-DD")}
                             panelColors={panelColors}
                         />
+
+                        <AreaChart
+                            width={600}
+                            height={400}
+                            data={chartData}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Area
+                                type="monotone"
+                                dataKey="success"
+                                stackId="1"
+                                stroke="#8884d8"
+                                fill="#61ff69"
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="failed"
+                                stackId="2"
+                                stroke="#82ca9d"
+                                fill="#ff6961"
+                            />
+                        </AreaChart>
                     </div>
                     <Table
                         dataSource={results}
