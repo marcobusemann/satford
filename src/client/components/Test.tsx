@@ -9,7 +9,11 @@ import { GitHubCalendar } from "./TestCalendar";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 
 import "./TestCalendar.css";
-import { ITestHistory, ITestDayStatistic, MovingTestHistory } from '../../shared/ITestHistory';
+import {
+    ITestHistory,
+    ITestDayStatistic,
+    MovingTestHistory
+} from "../../shared/ITestHistory";
 
 interface IRouterProps {
     name: string;
@@ -18,7 +22,7 @@ interface IRouterProps {
 interface IProps extends RouteComponentProps<IRouterProps> {}
 
 interface IState {
-    history: ITestHistory,
+    history: ITestHistory;
 }
 
 const panelColors = ["#EEEEEE", "#61ff69", "#ff6961"];
@@ -32,7 +36,7 @@ export class Test extends React.Component<IProps, IState> {
         const history: ITestHistory = {
             results: [],
             calendarChart: {},
-            dayStatistic: [],
+            dayStatistic: []
         };
 
         this.state = {
@@ -47,15 +51,14 @@ export class Test extends React.Component<IProps, IState> {
         });
 
         this.socket.on("TEST_FINISHED", (result: ITestResult) => {
-            if (result.name !== this.props.match.params.name)
-                return;
+            if (result.name !== this.props.match.params.name) return;
 
             const movingHistory = new MovingTestHistory(this.state.history);
             this.setState({ history: movingHistory.move(result) });
         });
 
         this.socket.on("RECEIVE_DATA_FOR_TEST", (data: ITestHistory) => {
-            this.setState({ 
+            this.setState({
                 history: data
             });
         });
@@ -130,7 +133,9 @@ export class Test extends React.Component<IProps, IState> {
                     </div>
                     <Table
                         dataSource={history.results}
-                        rowKey={item => { return item.timestamp + item.name} }
+                        rowKey={item => {
+                            return item.timestamp + item.name;
+                        }}
                         rowClassName={result =>
                             result.success ? "success" : "failure"
                         }
