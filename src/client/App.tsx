@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu } from "antd";
 import { Tests } from "./components/Tests";
 import { Test } from "./components/Test";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -10,17 +10,23 @@ export class App extends React.Component {
     render() {
         return (
             <Router>
-                <Layout className="layout">
+                <Layout>
                     <Header>
-                        <Link to="/" style={{ textDecoration: "none" }}>
-                            <h1 style={{ color: "white" }}>SATFORD</h1>
+                        <Link to="/" style={{ textDecoration: "none", float: "left" }}>
+                            <span style={{ color: "white" }}>SATFORD</span>
                         </Link>
                         <Menu
                             theme="dark"
                             mode="horizontal"
-                            defaultSelectedKeys={["2"]}
+                            selectable={false}
                             style={{ lineHeight: "64px" }}
-                        />
+                        >
+                            <Menu.Item key="agenda" style={{ marginLeft: "2em" }}>
+                                <a href="/agenda" target="_blank">
+                                    Schedule tests
+                                </a>
+                            </Menu.Item>
+                        </Menu>
                     </Header>
                     <Content style={{ padding: "0 50px" }}>
                         <Route exact path="/" component={Tests} />
