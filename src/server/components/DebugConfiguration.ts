@@ -59,7 +59,7 @@ export class DebugConfiguration implements IConfiguration {
             for (let test = 0; test < testsPerDay; test++) {
                 const successGoogle = Math.floor((Math.random() * 2) + 1) === 1;
                 const testResultGoogle: ITestResult = {
-                    timestamp: currentDay.clone().startOf('day').add(test, 'hours').toDate(),
+                    timestamp: currentDay.clone().startOf('day').add(test, 'minutes').toDate(),
                     name: 'google.de',
                     success: successGoogle,
                     data: { statusCode: successGoogle ? 200 : 500 }
@@ -68,7 +68,7 @@ export class DebugConfiguration implements IConfiguration {
                 
                 const successOther = Math.floor((Math.random() * 2) + 1) === 1;
                 const testResultOther: ITestResult = {
-                    timestamp: currentDay.clone().startOf('day').add(test, 'hours').toDate(),
+                    timestamp: currentDay.clone().startOf('day').add(test, 'minutes').toDate(),
                     name: 'localhost demo service',
                     success: successOther,
                     data: { statusCode: successGoogle ? 200 : 500 }
