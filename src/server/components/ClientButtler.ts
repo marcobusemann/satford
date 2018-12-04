@@ -58,7 +58,6 @@ export class ClientButtler {
     private async gatherResultsForTest(testName: string): Promise<ITestResult[]> {
         const results = await MongoTestResult.find({ name: testName })
             .sort({ timestamp: -1 })
-            .limit(200)
             .exec();
         return results;
     }

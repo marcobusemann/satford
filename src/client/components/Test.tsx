@@ -6,7 +6,14 @@ import { Table, Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
 import * as moment from "moment";
 import { GitHubCalendar } from "./TestCalendar";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    ResponsiveContainer
+} from "recharts";
 
 import "./TestCalendar.css";
 import { ITestHistory, MovingTestHistory } from "../../shared/ITestHistory";
@@ -90,69 +97,82 @@ export class Test extends React.Component<IProps, IState> {
                     <h1 style={{ textAlign: "center" }}>{testName}</h1>
                     <div
                         style={{
-                            marginLeft: "10em",
-                            marginRight: "10em",
-                            marginTop: "4em",
-                            marginBottom: "4em"
+                            marginLeft: "2em",
+                            marginRight: "2em",
+                            marginTop: "2em",
+                            marginBottom: "2em"
                         }}
                     >
+                        <h3>Successful days</h3>
                         <GitHubCalendar
                             values={history.calendarChart}
                             until={moment().format("YYYY-MM-DD")}
                             panelColors={panelColors}
                         />
+                        <br />
+                        <br />
 
-                        <AreaChart
-                            width={600}
-                            height={400}
-                            data={history.dayStatistic}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis />
-                            <Area
-                                type="monotone"
-                                dataKey="failed"
-                                stackId="2"
-                                stroke="#ff6961"
-                                fill="#ff6961"
-                                fillOpacity="1"
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="successful"
-                                stackId="1"
-                                stroke="#61ff69"
-                                fill="#61ff69"
-                                fillOpacity="1"
-                            />
-                        </AreaChart>
-                    </div>
-                    <Table
-                        dataSource={history.results}
-                        rowKey={item => {
-                            return item.timestamp + item.name;
-                        }}
-                        rowClassName={result =>
-                            result.success ? "success" : "failure"
-                        }
-                    >
-                        <Table.Column
-                            title="Timestamp"
-                            key="timestamp"
-                            dataIndex="timestamp"
-                            render={timestamp =>
-                                moment(timestamp).format("LLL")
+                        <h3>Error/Success over time</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart
+                                data={history.dayStatistic}
+                                margin={{
+                                    top: 10,
+                                    right: 30,
+                                    left: 0,
+                                    bottom: 0
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="day" />
+                                <YAxis />
+                                <Area
+                                    type="monotone"
+                                    dataKey="failed"
+                                    stackId="2"
+                                    stroke="#ff6961"
+                                    fill="#ff6961"
+                                    fillOpacity="1"
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="successful"
+                                    stackId="1"
+                                    stroke="#61ff69"
+                                    fill="#61ff69"
+                                    fillOpacity="1"
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                        <br />
+                        <br />
+
+                        <h3>Results</h3>
+                        <Table
+                            dataSource={history.results}
+                            rowKey={item => {
+                                return item.timestamp + item.name;
+                            }}
+                            rowClassName={result =>
+                                result.success ? "success" : "failure"
                             }
-                        />
-                        <Table.Column
-                            title="Data"
-                            key="data"
-                            dataIndex="data"
-                            render={data => JSON.stringify(data)}
-                        />
-                    </Table>
+                        >
+                            <Table.Column
+                                title="Timestamp"
+                                key="timestamp"
+                                dataIndex="timestamp"
+                                render={timestamp =>
+                                    moment(timestamp).format("LLL")
+                                }
+                            />
+                            <Table.Column
+                                title="Data"
+                                key="data"
+                                dataIndex="data"
+                                render={data => JSON.stringify(data)}
+                            />
+                        </Table>
+                    </div>
                 </div>
             </React.Fragment>
         );
