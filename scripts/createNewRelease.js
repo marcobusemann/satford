@@ -1,4 +1,4 @@
-const execCommands = require('./execCommands')M
+const execCommands = require('./execCommands');
 const path = require('path');
 
 const packageConfig = require(path.join(__dirname, '..', 'package.json'));
