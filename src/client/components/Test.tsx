@@ -9,11 +9,7 @@ import { GitHubCalendar } from "./TestCalendar";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 
 import "./TestCalendar.css";
-import {
-    ITestHistory,
-    ITestDayStatistic,
-    MovingTestHistory
-} from "../../shared/ITestHistory";
+import { ITestHistory, MovingTestHistory } from "../../shared/ITestHistory";
 
 interface IRouterProps {
     name: string;
@@ -117,17 +113,19 @@ export class Test extends React.Component<IProps, IState> {
                             <YAxis />
                             <Area
                                 type="monotone"
-                                dataKey="successful"
-                                stackId="1"
-                                stroke="#8884d8"
-                                fill="#61ff69"
+                                dataKey="failed"
+                                stackId="2"
+                                stroke="#ff6961"
+                                fill="#ff6961"
+                                fillOpacity="1"
                             />
                             <Area
                                 type="monotone"
-                                dataKey="failed"
-                                stackId="2"
-                                stroke="#82ca9d"
-                                fill="#ff6961"
+                                dataKey="successful"
+                                stackId="1"
+                                stroke="#61ff69"
+                                fill="#61ff69"
+                                fillOpacity="1"
                             />
                         </AreaChart>
                     </div>
