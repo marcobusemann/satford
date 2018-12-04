@@ -18,6 +18,8 @@ interface IProps extends RouteComponentProps<IRouterProps> {}
 
 interface IState {
     results: ITestResult[];
+    calendarData: any,
+    areaData: any,
 }
 
 const panelColors = ["#EEEEEE", "#61ff69", "#ff6961"];
@@ -28,7 +30,9 @@ export class Test extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            results: []
+            results: [],
+            calendarData: {},
+            areaData: [],
         };
     }
 
@@ -41,16 +45,31 @@ export class Test extends React.Component<IProps, IState> {
         this.socket.on("TEST_FINISHED", (data: ITestResult) => {
             if (data.name === this.props.match.params.name) {
                 const results = [data].concat(this.state.results);
-                this.setState({ results });
+
+                const date = moment(data.timestamp).format("YYYY-MM-DD");
+                const calendarData = Object.assign({}, this.state.calendarData);
+                calendarData[date] = data.success ? 1 : 2;
+
+                const areaData = [].concat(this.state.areaData);
+                if (data.success)
+                    areaData[areaData.length - 2].success++;
+                else
+                    areaData[areaData.length - 2].failed++;
+
+                this.setState({ results, calendarData, areaData });
             }
         });
 
-        this.socket.on("RECEIVE_RESULTS_FOR_TEST", (data: ITestResult[]) => {
-            this.setState({ results: data });
+        this.socket.on("RECEIVE_DATA_FOR_TEST", (data: any) => {
+            this.setState({ 
+                results: data.results,
+                calendarData: data.charts.calendar,
+                areaData: data.charts.area,
+            });
         });
 
         const testName = this.props.match.params.name;
-        this.socket.emit("RESULTS_FOR_TEST", testName);
+        this.socket.emit("DATA_FOR_TEST", testName);
     }
 
     componentWillUnmount() {
@@ -59,55 +78,8 @@ export class Test extends React.Component<IProps, IState> {
     }
 
     render() {
-        const { results } = this.state;
+        const { results, calendarData, areaData } = this.state;
         const testName = this.props.match.params.name;
-
-        let calendarChartData = {};
-        let chartDataMap = {};
-        let chartData = [];
-
-        if (results.length !== 0) {
-            const latest = results[0];
-            console.log('latest', latest);
-            chartData.push({
-                date: moment(latest.timestamp).subtract(1, 'day').format("YYYY-MM-DD"),
-                success: 0,
-                failed: 0,
-            });
-        }
-
-        results.forEach(result => {
-            const date = moment(result.timestamp).format("YYYY-MM-DD");
-            if (!calendarChartData[date]) {
-                const index = result.success ? 1 : 2;
-                calendarChartData[date] = index;
-            }
-
-            if (!chartDataMap[date]) {
-                const dayData = {
-                    date: date,
-                    success: 0,
-                    failed: 0,
-                };
-                chartDataMap[date] = dayData;
-                chartData.push(dayData);
-            }
-
-            if (result.success)
-                chartDataMap[date].success++;
-            else
-                chartDataMap[date].failed++;
-        });
-
-        if (results.length !== 0) {
-            const last = results[results.length - 1];
-            console.log('last', last);
-            chartData.push({
-                date: moment(last.timestamp).add(1, 'day').format("YYYY-MM-DD"),
-                success: 0,
-                failed: 0,
-            })
-        }
 
         return (
             <React.Fragment>
@@ -134,7 +106,7 @@ export class Test extends React.Component<IProps, IState> {
                         }}
                     >
                         <GitHubCalendar
-                            values={calendarChartData}
+                            values={calendarData}
                             until={moment().format("YYYY-MM-DD")}
                             panelColors={panelColors}
                         />
@@ -142,7 +114,7 @@ export class Test extends React.Component<IProps, IState> {
                         <AreaChart
                             width={600}
                             height={400}
-                            data={chartData}
+                            data={areaData}
                             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" />
