@@ -5,6 +5,7 @@ import { ITestCreatedData, TEST_CREATED, ITestFinishedData, SCHEDULED_TEST_FINIS
 import { ITestResult } from '../../shared/ITestResult';
 import { MongoTestResult } from './MongoTestResult';
 import * as moment from 'moment';
+import { ITestHistory, TestDayStatistic, ITestDayStatistic } from '../../shared/ITestHistory';
 
 export class ClientButtler {
     private tests: ITest[] = [];
@@ -38,11 +39,8 @@ export class ClientButtler {
 
             socket.on("DATA_FOR_TEST", async (testName) => {
                 const results = await this.gatherResultsForTest(testName);
-                const chartData = await this.calculateInitialChartData(results);
-                socket.emit("RECEIVE_DATA_FOR_TEST", {
-                    results,
-                    charts: chartData,
-                });
+                const history = await this.generateTestHistory(results);
+                socket.emit("RECEIVE_DATA_FOR_TEST", history);
             });
         });
     }
@@ -65,12 +63,8 @@ export class ClientButtler {
         return results;
     }
 
-    private async calculateInitialChartData(results: ITestResult[]) {
-        let calendarChartData = {};
-        let chartDataMap = {};
-        let chartData = [];
-
-        const sortedResults = results.sort((a, b) => {
+    private async generateTestHistory(unsortedResults: ITestResult[]): Promise<ITestHistory> {
+        const results = unsortedResults.sort((a, b) => {
             const momentA = moment(a.timestamp);
             const momentB = moment(b.timestamp);
             
@@ -82,51 +76,44 @@ export class ClientButtler {
 
             return 1;
         });
+        
+        const history: ITestHistory = {
+            results: unsortedResults,
+            calendarChart: {},
+            dayStatistic: [],
+        };
 
-        if (sortedResults.length !== 0) {
-            const latest = sortedResults[0];
-            chartData.push({
-                date: moment(latest.timestamp).subtract(1, 'day').format("YYYY-MM-DD"),
-                success: 0,
-                failed: 0,
-            });
+        const dayStatisticCache: { [day: string]: ITestDayStatistic } = {};
+
+        const hasResults = results.length !== 0;
+        if (hasResults) {
+            const oldest = results[0];
+            history.dayStatistic.push(new TestDayStatistic(moment(oldest.timestamp).subtract(1, 'day')));
         }
 
-        sortedResults.forEach(result => {
+        for (const result of results) {
             const date = moment(result.timestamp).format("YYYY-MM-DD");
-            if (!calendarChartData[date]) {
-                const index = result.success ? 1 : 2;
-                calendarChartData[date] = index;
-            }
 
-            if (!chartDataMap[date]) {
-                const dayData = {
-                    date: date,
-                    success: 0,
-                    failed: 0,
-                };
-                chartDataMap[date] = dayData;
-                chartData.push(dayData);
+            if (!history.calendarChart[date])
+                history.calendarChart[date] = result.success ? 1 : 2;
+
+            if (!dayStatisticCache[date]) {
+                const dayStatistic = new TestDayStatistic(moment(result.timestamp));
+                dayStatisticCache[date] = dayStatistic;
+                history.dayStatistic.push(dayStatistic);
             }
 
             if (result.success)
-                chartDataMap[date].success++;
+                dayStatisticCache[date].successful++;
             else
-                chartDataMap[date].failed++;
-        });
-
-        if (sortedResults.length !== 0) {
-            const last = sortedResults[sortedResults.length - 1];
-            chartData.push({
-                date: moment(last.timestamp).add(1, 'day').format("YYYY-MM-DD"),
-                success: 0,
-                failed: 0,
-            })
+                dayStatisticCache[date].failed++;
         }
 
-        return {
-            calendar: calendarChartData,
-            area: chartData,
+        if (hasResults) {
+            const newest = results[results.length - 1];
+            history.dayStatistic.push(new TestDayStatistic(moment(newest.timestamp).add(1, 'day')));
         }
+
+        return history;
     }
 }

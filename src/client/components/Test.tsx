@@ -9,6 +9,7 @@ import { GitHubCalendar } from "./TestCalendar";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 
 import "./TestCalendar.css";
+import { ITestHistory, ITestDayStatistic, MovingTestHistory } from '../../shared/ITestHistory';
 
 interface IRouterProps {
     name: string;
@@ -17,9 +18,7 @@ interface IRouterProps {
 interface IProps extends RouteComponentProps<IRouterProps> {}
 
 interface IState {
-    results: ITestResult[];
-    calendarData: any,
-    areaData: any,
+    history: ITestHistory,
 }
 
 const panelColors = ["#EEEEEE", "#61ff69", "#ff6961"];
@@ -29,10 +28,15 @@ export class Test extends React.Component<IProps, IState> {
 
     constructor(props) {
         super(props);
-        this.state = {
+
+        const history: ITestHistory = {
             results: [],
-            calendarData: {},
-            areaData: [],
+            calendarChart: {},
+            dayStatistic: [],
+        };
+
+        this.state = {
+            history
         };
     }
 
@@ -42,29 +46,17 @@ export class Test extends React.Component<IProps, IState> {
             console.log("Connected to server");
         });
 
-        this.socket.on("TEST_FINISHED", (data: ITestResult) => {
-            if (data.name === this.props.match.params.name) {
-                const results = [data].concat(this.state.results);
+        this.socket.on("TEST_FINISHED", (result: ITestResult) => {
+            if (result.name !== this.props.match.params.name)
+                return;
 
-                const date = moment(data.timestamp).format("YYYY-MM-DD");
-                const calendarData = Object.assign({}, this.state.calendarData);
-                calendarData[date] = data.success ? 1 : 2;
-
-                const areaData = [].concat(this.state.areaData);
-                if (data.success)
-                    areaData[areaData.length - 2].success++;
-                else
-                    areaData[areaData.length - 2].failed++;
-
-                this.setState({ results, calendarData, areaData });
-            }
+            const movingHistory = new MovingTestHistory(this.state.history);
+            this.setState({ history: movingHistory.move(result) });
         });
 
-        this.socket.on("RECEIVE_DATA_FOR_TEST", (data: any) => {
+        this.socket.on("RECEIVE_DATA_FOR_TEST", (data: ITestHistory) => {
             this.setState({ 
-                results: data.results,
-                calendarData: data.charts.calendar,
-                areaData: data.charts.area,
+                history: data
             });
         });
 
@@ -78,7 +70,7 @@ export class Test extends React.Component<IProps, IState> {
     }
 
     render() {
-        const { results, calendarData, areaData } = this.state;
+        const { history } = this.state;
         const testName = this.props.match.params.name;
 
         return (
@@ -106,7 +98,7 @@ export class Test extends React.Component<IProps, IState> {
                         }}
                     >
                         <GitHubCalendar
-                            values={calendarData}
+                            values={history.calendarChart}
                             until={moment().format("YYYY-MM-DD")}
                             panelColors={panelColors}
                         />
@@ -114,7 +106,7 @@ export class Test extends React.Component<IProps, IState> {
                         <AreaChart
                             width={600}
                             height={400}
-                            data={areaData}
+                            data={history.dayStatistic}
                             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" />
@@ -122,7 +114,7 @@ export class Test extends React.Component<IProps, IState> {
                             <YAxis />
                             <Area
                                 type="monotone"
-                                dataKey="success"
+                                dataKey="successful"
                                 stackId="1"
                                 stroke="#8884d8"
                                 fill="#61ff69"
@@ -137,8 +129,8 @@ export class Test extends React.Component<IProps, IState> {
                         </AreaChart>
                     </div>
                     <Table
-                        dataSource={results}
-                        rowKey="timestamp"
+                        dataSource={history.results}
+                        rowKey={item => { return item.timestamp + item.name} }
                         rowClassName={result =>
                             result.success ? "success" : "failure"
                         }
