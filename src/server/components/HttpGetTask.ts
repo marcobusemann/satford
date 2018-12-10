@@ -19,7 +19,8 @@ export class HttpGetTask implements ISchedulableTask {
         const requestOptions = {
             method: "GET",
             uri: data.endpoint,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            simple: false,
         };
         try {
             const result = await request(requestOptions);            

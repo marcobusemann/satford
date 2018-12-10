@@ -20,7 +20,8 @@ export class HttpPostTask implements ISchedulableTask {
         const requestOptions = {
             method: "POST",
             uri: data.endpoint,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            simple: false,
         };
 
         try {
