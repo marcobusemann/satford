@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as moment from 'moment';
-//import * as elementResizeDetectorMaker from "element-resize-detector";
 
 interface IState {
     columns: number;
@@ -21,8 +20,6 @@ export class GitHubCalendar extends React.Component<IProps, IState> {
     private weekLabelWidth: number; 
     private panelSize: number; 
     private panelMargin: number; 
-    //private elementResizeDetector: any;
-    //private resizeHandler: any;
 
     private calendarContainer: any;
 
@@ -86,17 +83,7 @@ export class GitHubCalendar extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
-        //this.elementResizeDetector = elementResizeDetectorMaker({ strategy: "scroll" });
-        //this.resizeHandler = () => this.updateSize();
-
-        //this.elementResizeDetector.listenTo(
-        //    this.calendarContainer.current,
-        //    this.resizeHandler);
         this.updateSize();
-    }
-
-    componentWillUnmount() {
-        //this.elementResizeDetector.uninstall(this.calendarContainer.current);
     }
 
     render() {
