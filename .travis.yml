@@ -1,0 +1,28 @@
+language: node_js
+node_js:
+  - "node"
+
+services:
+  - docker
+
+stages:
+  - compile
+  - test
+  - name: deploy
+    if: branch = master
+
+jobs:
+  include:
+    - stage: build
+      script: 
+        - npm install
+        - npm run bundle
+    - stage: test
+      script: 
+        - npm install
+        - npm test
+    - stage: deploy
+      script:
+        - npm install
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - npm run deploy
