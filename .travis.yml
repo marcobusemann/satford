@@ -6,7 +6,7 @@ services:
   - docker
 
 stages:
-  - compile
+  - build
   - test
   - name: deploy
     if: branch = master
