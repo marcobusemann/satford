@@ -4,8 +4,10 @@
   "description": "Simple API testing service for devs",
   "scripts": {
     "start": "mkdirp dist && cd dist && node ../fuse.js",
-    "bundle": "mkdirp dist && cd dist && NODE_ENV=production node ../fuse.js",
-    "test": "jest"
+    "bundle": "mkdirp dist && cd dist && cross-env NODE_ENV=production node ../fuse.js",
+    "test": "jest",
+    "complete:bugfix": "npm version patch",
+    "deploy": "npm run bundle && node scripts/dockerize.js"
   },
   "keywords": [
     "api",
@@ -34,8 +36,6 @@
     "socket.io": "^2.1.1"
   },
   "devDependencies": {
-    "mongodb-memory-server": "^2.7.2",
-    "@types/recharts": "^1.1.2",
     "@types/agenda": "^2.0.3",
     "@types/express": "^4.16.0",
     "@types/jest": "^23.3.9",
@@ -44,10 +44,13 @@
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
     "@types/react-router-dom": "^4.3.1",
+    "@types/recharts": "^1.1.2",
     "@types/socket.io": "^2.1.0",
     "@types/socket.io-client": "^1.4.32",
+    "cross-env": "^5.2.0",
     "fuse-box": "^3.6.0",
     "jest": "^23.6.0",
+    "mongodb-memory-server": "^2.7.2",
     "ts-jest": "^23.10.4",
     "typescript": "^3.1.6",
     "uglify-es": "^3.3.9"
