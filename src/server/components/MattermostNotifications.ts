@@ -36,7 +36,7 @@ export class MattermostNotifications {
                         {
                             short: true,
                             title: "Options",
-                            value: data.test.options
+                            value: JSON.stringify(data.test.options)
                         },
                         {
                             short: true,
