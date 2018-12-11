@@ -92,10 +92,7 @@ docker-compose up -d
 ```
 
 # Roadmap
-- [ ] Setup Git-Flow and CI/CD
 - [ ] Implement module system
-- [ ] Configure tests in backend
-- [ ] Live status page (socket.io)
 - [ ] E-Mail notification target
 - [ ] Slack notification target
 - [ ] Show link to backend in notification
