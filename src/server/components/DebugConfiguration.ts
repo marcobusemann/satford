@@ -15,17 +15,44 @@ export class DebugConfiguration implements IConfiguration {
     async tests(): Promise<ITest[]> {
         return [
             {
-                name: "google.de",
-                frequency: "30 seconds",
+                name: "google.de (unsecure)",
+                frequency: "1 minute",
                 isActive: true,
                 type: "http-get",
                 options: {
                     endpoint: "http://google.de",
                     expectedStatusCode: 200
                 }
+            },{
+                name: "google.de",
+                frequency: "1 minute",
+                isActive: true,
+                type: "http-get",
+                options: {
+                    endpoint: "https://google.de",
+                    expectedStatusCode: 200
+                }
+            },{
+                name: "microsoft.de",
+                frequency: "30 seconds",
+                isActive: true,
+                type: "http-get",
+                options: {
+                    endpoint: "https://www.microsoft.com",
+                    expectedStatusCode: 200
+                }
+            },{
+                name: "treesoft.de",
+                frequency: "1 minute",
+                isActive: true,
+                type: "http-get",
+                options: {
+                    endpoint: "https://www.treesoft.de",
+                    expectedStatusCode: 200
+                }
             },
             {
-                name: "localhost demo service",
+                name: "local demo service",
                 frequency: "30 seconds",
                 isActive: true,
                 type: "http-get",
@@ -49,43 +76,33 @@ export class DebugConfiguration implements IConfiguration {
         console.log("Initializing demo data");
 
         const running = await inMemoryDb.running();
+        const tests = await this.tests();
 
         await mongoose.connect(running.url);
         await MongoTestResult.deleteMany({});
 
-        const today = moment();
+        for (const test of tests) {
+            const today = moment();
 
-        const totalDays = 50;
-        for (let index = 0; index < totalDays; index++) {
-            const currentDay = today.clone().subtract(index, "days");
-
-            const testsPerDay = Math.floor(Math.random() * 20 + 4);
-            for (let test = 0; test < testsPerDay; test++) {
-                const successGoogle = Math.floor(Math.random() * 2 + 1) === 1;
-                const testResultGoogle: ITestResult = {
-                    timestamp: currentDay
-                        .clone()
-                        .startOf("day")
-                        .add(test, "minutes")
-                        .toDate(),
-                    name: "google.de",
-                    success: successGoogle,
-                    data: { statusCode: successGoogle ? 200 : 500 }
-                };
-                await MongoTestResult.create(testResultGoogle);
-
-                const successOther = Math.floor(Math.random() * 2 + 1) === 1;
-                const testResultOther: ITestResult = {
-                    timestamp: currentDay
-                        .clone()
-                        .startOf("day")
-                        .add(test, "minutes")
-                        .toDate(),
-                    name: "localhost demo service",
-                    success: successOther,
-                    data: { statusCode: successGoogle ? 200 : 500 }
-                };
-                await MongoTestResult.create(testResultOther);
+            const totalDays = 50;
+            for (let index = 0; index < totalDays; index++) {
+                const currentDay = today.clone().subtract(index, "days");
+    
+                const testsPerDay = Math.floor(Math.random() * 20 + 4);
+                for (let testDay = 0; testDay < testsPerDay; testDay++) {
+                    const wasSuccessfull = Math.floor(Math.random() * 2 + 1) === 1;
+                    const testResult: ITestResult = {
+                        timestamp: currentDay
+                            .clone()
+                            .startOf("day")
+                            .add(testDay, "minutes")
+                            .toDate(),
+                        name: test.name,
+                        success: wasSuccessfull,
+                        data: { statusCode: wasSuccessfull ? 200 : 500 }
+                    };
+                    await MongoTestResult.create(testResult);
+                }
             }
         }
 
