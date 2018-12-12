@@ -77,7 +77,7 @@ export class ClientButtler {
         });
         
         const history: ITestHistory = {
-            results: results.reverse(),
+            results: [].concat(results).reverse(),
             calendarChart: {},
             dayStatistic: [],
         };
