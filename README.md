@@ -12,6 +12,10 @@ The idea behind this service is to provide a self hosted alternative to services
 
 To get notified about failing tests the idea is to configure one or more notification targets. Whenever a test failes or comes back to live, a notification will be send to the notification target. Actually there is only a **mattermost** target available.
 
+![List of all configured tests](screenshots/satford-tests.png)
+
+![Overview about a tests results](screenshots/satford-test.png)
+
 # Getting started
 
 ## Create a configuration
