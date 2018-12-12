@@ -124,7 +124,7 @@ export class Test extends React.Component<IProps, IState> {
                                 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="day" />
+                                <XAxis dataKey="day" tickFormatter={date => moment(date).format("L")} />
                                 <YAxis />
                                 <Area
                                     type="monotone"

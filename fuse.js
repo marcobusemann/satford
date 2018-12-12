@@ -32,7 +32,15 @@ const fuseClient = FuseBox.init({
                     path: "styles.min.css"
                 },
                 bakeApiIntoBundle: "bundle",
-                treeshake: false
+                treeshake: false,
+                api: (core) => {
+                    core.solveComputed("moment/moment.js", {
+                        mapping: "moment/locale**",
+                        fn: statement => {
+                            statement.setExpression(`"moment/locale/" + name + ".js"`)
+                        }
+                    });
+                }
             })
     ]
 });
