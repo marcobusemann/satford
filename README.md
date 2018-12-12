@@ -25,6 +25,8 @@ The time intervall can be configured as follows:
 >[Agenda](https://github.com/agenda/agenda) uses Human Interval for specifying the intervals. It supports the following units:
 >seconds, minutes, hours, days,weeks, months -- assumes 30 days, years -- assumes 365 days
 
+> As options to http-get or http-post you can pass everything that request accepts as options (https://github.com/request/request).
+
 ```json
 config.json
 
@@ -43,7 +45,7 @@ config.json
         "isActive": true,
         "name": "service B",
         "type": "http-post",
-        "options": { // request.post() options (https://github.com/request/request)
+        "options": {
             "endpoint": "http://serviceB.de",
             "expectedStatusCode": 200
         },
