@@ -1,6 +1,6 @@
 {
   "name": "satford",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Simple API testing service for devs",
   "scripts": {
     "start": "mkdirp dist && cd dist && node ../fuse.js",
