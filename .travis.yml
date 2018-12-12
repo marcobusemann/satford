@@ -9,7 +9,7 @@ stages:
   - build
   - test
   - name: deploy
-    if: branch = master
+    if: tag ~= /v\d+.\d+.\d+/
 
 jobs:
   include:
