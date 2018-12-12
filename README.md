@@ -113,8 +113,10 @@ npm start
 ```
 
 # Release new versions
-Releasing new versions means building and pushing docker images to the hub. There is one command which does exactly this. Increasing the version number is actually not included!
+Releasing new versions means building and pushing docker images to the hub. There is one command which does exactly this. 
+Before deploying, we increase the bugfix version number.
 ```
+npm run complete:bugfix
 docker login
-npm run release
+npm run deploy
 ```
