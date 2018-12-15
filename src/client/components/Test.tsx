@@ -18,6 +18,9 @@ import {
 import "./TestCalendar.css";
 import { ITestHistory, MovingTestHistory } from "../../shared/ITestHistory";
 
+const COLOR_SUCCESS = "#90ee90";
+const COLOR_FAILURE = "#f08080";
+
 interface IRouterProps {
     name: string;
 }
@@ -28,7 +31,7 @@ interface IState {
     history: ITestHistory;
 }
 
-const panelColors = ["#EEEEEE", "#61ff69", "#ff6961"];
+const panelColors = ["#EEEEEE", COLOR_SUCCESS, COLOR_FAILURE];
 
 export class Test extends React.Component<IProps, IState> {
     private socket: SocketIOClient.Socket;
@@ -128,18 +131,18 @@ export class Test extends React.Component<IProps, IState> {
                                 <YAxis />
                                 <Area
                                     type="monotone"
-                                    dataKey="failed"
+                                    dataKey="successful"
                                     stackId="2"
-                                    stroke="#ff6961"
-                                    fill="#ff6961"
+                                    stroke={COLOR_SUCCESS}
+                                    fill={COLOR_SUCCESS}
                                     fillOpacity="1"
                                 />
                                 <Area
                                     type="monotone"
-                                    dataKey="successful"
+                                    dataKey="failed"
                                     stackId="1"
-                                    stroke="#61ff69"
-                                    fill="#61ff69"
+                                    stroke={COLOR_FAILURE}
+                                    fill={COLOR_FAILURE}
                                     fillOpacity="1"
                                 />
                             </AreaChart>

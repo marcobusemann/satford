@@ -7,9 +7,9 @@
 }
 
 .success {
-    background: lightgreen;
+    background: #90ee90;
 }
 
 .failure {
-    background: lightcoral;
+    background: #f08080;
 }
