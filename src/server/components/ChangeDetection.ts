@@ -7,6 +7,7 @@ import {
 } from "./Messages";
 import { ChangeDetectableTestResults } from "./ChangeDetectableTestResults";
 import { ILastTestResults } from './ILastTestResults';
+import * as moment from 'moment';
 
 export class ChangeDetection {
     constructor(
@@ -22,6 +23,16 @@ export class ChangeDetection {
     }
 
     private detectStateChange = async (data: ITestResultSavedData) => {
+        if (data.test.allowedDowntimeRanges) {
+            for (const range of data.test.allowedDowntimeRanges) {
+                const rangeStart = moment(range.start, 'HH:mm');
+                const rangeEnd = moment(range.end, 'HH:mm');
+                const downtimeWasExpected = moment(data.result.timestamp).isBetween(rangeStart, rangeEnd);
+                if (downtimeWasExpected)
+                    return;
+            }
+        }
+
         const allowedFails = data.test.allowedFails || 0;
         const amountOfResultsToCompare = allowedFails + 2;
 

@@ -59,7 +59,13 @@ export class DebugConfiguration implements IConfiguration {
                 options: {
                     endpoint: "http://localhost:4000",
                     expectedStatusCode: 200
-                }
+                },
+                allowedDowntimeRanges: [
+                    {
+                        start: '15:00',
+                        end: '16:00'
+                    }
+                ]
             }
         ];
     }
