@@ -17,6 +17,7 @@ import { ChangeDetection } from "./components/ChangeDetection";
 import { FileSystemConfiguration } from "./components/FileSystemConfiguration";
 import { MattermostNotifications } from "./components/MattermostNotifications";
 import { ClientButtler } from './components/ClientButtler';
+import { LastPersistedTestResults } from './components/LastPersistedTestResults';
 
 let configuration: IConfiguration = null;
 if (process.env.NODE_ENV === "production") {
@@ -37,7 +38,9 @@ const persistedTestResults = new PersistedTestResults(
     configuration,
     messageHub
 );
-const changeDetection = new ChangeDetection(messageHub);
+const changeDetection = new ChangeDetection(
+    new LastPersistedTestResults(),
+    messageHub);
 const mattermostNotifications = new MattermostNotifications(
     configuration,
     messageHub

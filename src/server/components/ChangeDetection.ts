@@ -6,10 +6,12 @@ import {
     TEST_STATE_CHANGED
 } from "./Messages";
 import { ChangeDetectableTestResults } from "./ChangeDetectableTestResults";
-import { MongoTestResult } from "./MongoTestResult";
+import { ILastTestResults } from './ILastTestResults';
 
 export class ChangeDetection {
-    constructor(private messageHub: IMessageHub) {
+    constructor(
+        private lastTestResults: ILastTestResults,
+        private messageHub: IMessageHub) {
     }
 
     public async start() {
@@ -23,10 +25,8 @@ export class ChangeDetection {
         const allowedFails = data.test.allowedFails || 0;
         const amountOfResultsToCompare = allowedFails + 2;
 
-        const lastResult = await MongoTestResult.find({ name: data.test.name })
-            .sort({ timestamp: -1 })
-            .limit(amountOfResultsToCompare);
-        const changeDetection = new ChangeDetectableTestResults(lastResult);
+        const lastResults = await this.lastTestResults.last(data.test.name, amountOfResultsToCompare);
+        const changeDetection = new ChangeDetectableTestResults(lastResults);
 
         if (changeDetection.hasStateChanged())
         {
