@@ -62,8 +62,8 @@ export class DebugConfiguration implements IConfiguration {
                 },
                 allowedDowntimeRanges: [
                     {
-                        start: '15:00',
-                        end: '16:00'
+                        start: '08:00',
+                        end: '09:00'
                     }
                 ]
             }

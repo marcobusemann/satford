@@ -23,20 +23,27 @@ export class ChangeDetection {
     }
 
     private detectStateChange = async (data: ITestResultSavedData) => {
-        if (data.test.allowedDowntimeRanges) {
-            for (const range of data.test.allowedDowntimeRanges) {
+        const { test, result } = data;
+
+        if (test.allowedDowntimeRanges) {
+            const resultMoment = moment(result.timestamp);
+            for (const range of test.allowedDowntimeRanges) {
                 const rangeStart = moment(range.start, 'HH:mm');
                 const rangeEnd = moment(range.end, 'HH:mm');
-                const downtimeWasExpected = moment(data.result.timestamp).isBetween(rangeStart, rangeEnd);
-                if (downtimeWasExpected)
+                const downtimeWasExpected = resultMoment.isBetween(rangeStart, rangeEnd);
+                if (downtimeWasExpected) {
+                    console.log(`Expected downtime (${rangeStart.format('L LT')}, ${rangeEnd.format('L LT')}) did match for ${test.name} (${resultMoment.format('L LT')})!`);
                     return;
+                } 
+                else
+                    console.log(`Expected downtime (${rangeStart.format('L LT')}, ${rangeEnd.format('L LT')}) did NOT match for ${test.name} (${resultMoment.format('L LT')})!`);
             }
         }
 
-        const allowedFails = data.test.allowedFails || 0;
+        const allowedFails = test.allowedFails || 0;
         const amountOfResultsToCompare = allowedFails + 2;
 
-        const lastResults = await this.lastTestResults.last(data.test.name, amountOfResultsToCompare);
+        const lastResults = await this.lastTestResults.last(test.name, amountOfResultsToCompare);
         const changeDetection = new ChangeDetectableTestResults(lastResults);
 
         if (changeDetection.hasStateChanged())
